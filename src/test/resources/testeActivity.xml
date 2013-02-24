@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xact:activity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xact="urn:pt.jma.orchestration.activity">
+	<xact:properties />
+	<xact:actions start="hello-world-action">
+		<xact:action name="hello-world-action" service="teste">
+			<xact:target class="pt.jma.orchestration.test.HelloWorld" method="execute" />
+			<xact:binds>
+				<xact:input>
+					<xact:bind from="name" to="name" />
+				</xact:input>
+				<xact:output>
+					<xact:bind from="sayHi" to="sayHi" />
+				</xact:output>
+			</xact:binds>
+		</xact:action>
+	</xact:actions>
+	<xact:results />
+	<xact:binds>
+		<xact:input/>
+		<xact:output/>
+	</xact:binds>
+	<xact:events />
+</xact:activity>
