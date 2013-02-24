@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<activity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="urn:pt.jma.orchestration.activity" parent="activity_parent">
+	<properties>
+		<property name="dlkfsjd">34343433ç423ç4l23çºl2º</property>
+		<property name="dlkfsjd">34343433ç423ç4l23çºl2º</property>
+		<property name="dlkfsjd">34343433ç423ç4l23çºl2º</property>
+		<property name="dlkfsjd">34343433ç423ç4l23çºl2º</property>
+		<property name="dlkfsjd">34343433ç423ç4l23çºl2º</property>
+		<property name="dlkfsjd">34343433ç423ç4l23çºl2º</property>
+	</properties>
+
+	<actions start="a1ddfd">
+		<action name="dfdf" service="dfdfd">
+			<target class="dfdf" method="343434" />
+			<binds>
+				<input>
+					<bind from="dfdf" to="dfdf" converter="dfdf" />
+					<bind from="dfdf" to="dfd" converter="dfdf" />
+					<bind from="dfdf" to="dfdf" />
+					<bind from="dfdf" to="dfdf" />
+
+				</input>
+				<output>
+					<bind from="dfdf" to="dfd" converter="dfdf" />
+					<bind from="dfdf" to="dfdf" converter="dfdf" />
+					<bind from="dfd" to="dfd" />
+				</output>
+			</binds>
+			<forwards>
+				<forward outcome="dfdf" action="ddf" />
+				<forward outcome="dfdfd" action="dfdf" />
+				<forward outcome="dfdf" action="dfdf" />
+			</forwards>
+		</action>
+		<action name="dddd" service="ffff">
+			<target class="dfdf" method="343434" />
+			<binds>
+				<output>
+					<bind from="dfdf" to="dfdfd" converter="SDDS" />
+					<bind from="dfdfdd" to="dfd" converter="SSSSS" />
+					<bind from="df" to="dfdf" />
+					<bind from="dfdf" to="dfdf" />
+					<bind from="dfdf" to="dfdd" />
+				</output>
+			</binds>
+			<forwards>
+				<forward action="wewewew" />
+			</forwards>
+		</action>
+		<action name="dfdd" service="dfdf">
+			<target class="dfdf" method="343434" />
+			<binds>
+				<input>
+					<bind from="dfdf" to="dfdf"  converter="ERERE" />
+					<bind from="dfdf" to="dfdf" converter="WEWEW" />
+					<bind from="dfdf" to="dfdf" />
+					<bind from="dfd" to="dfdf" />
+					<bind from="dfdf" to="dfdfd" />
+				</input>
+				<output>
+					<bind from="dfdf" to="dfdf" converter="WEWE" />
+					<bind from="dfdf" to="dfdfdf" converter="WEWEW" />
+					<bind from="dfd" to="dfdf" />
+					<bind from="dfdf" to="dfdf" />
+					<bind from="565dfdfd" to="dfdd" />
+				</output>
+			</binds>
+		</action>
+	</actions>
+</activity>
