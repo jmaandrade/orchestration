@@ -1,6 +1,5 @@
 package pt.jma.orchestration.test;
 
-
 public class HelloWorld {
 
 	String name = "";
@@ -9,6 +8,7 @@ public class HelloWorld {
 	public String execute() {
 
 		this.sayHi = String.format("Hi %s", this.name);
+
 		return "ok";
 	}
 

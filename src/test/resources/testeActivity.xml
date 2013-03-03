@@ -16,8 +16,10 @@
 	</xact:actions>
 	<xact:results />
 	<xact:binds>
-		<xact:input/>
-		<xact:output/>
+		<xact:input>
+			<xact:bind from="name" to="last-name" scopeTo="global-state" />
+		</xact:input>
+		<xact:output />
 	</xact:binds>
 	<xact:events />
 </xact:activity>

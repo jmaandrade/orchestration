@@ -25,9 +25,27 @@
 	<xs:complexType name="bindType">
 		<xs:simpleContent>
 			<xs:extension base="xs:string">
-				<xs:attribute type="xs:string" name="scopeFrom" use="optional" />
+				<xs:attribute type="xs:string" name="scopeFrom" use="optional">
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="scope" />
+							<xsd:enumeration value="properties" />
+							<xsd:enumeration value="context" />
+							<xsd:enumeration value="global-state" />
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xs:attribute>
 				<xs:attribute type="xs:string" name="from" />
-				<xs:attribute type="xs:string" name="scopeTo" use="optional" />
+				<xs:attribute type="xs:string" name="scopeTo" use="optional" >
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:enumeration value="scope" />
+							<xsd:enumeration value="properties" />
+							<xsd:enumeration value="context" />
+							<xsd:enumeration value="global-state" />
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xs:attribute>
 				<xs:attribute type="xs:string" name="to" />
 				<xs:attribute type="xs:string" name="converter" use="optional" />
 			</xs:extension>
@@ -106,7 +124,7 @@
 		<xs:sequence>
 			<xs:element type="pt:stateType" name="state" maxOccurs="unbounded" minOccurs="0" xmlns:pt="urn:pt.jma.orchestration.activity" />
 		</xs:sequence>
-			<xs:attribute type="xs:string" name="name" />
+		<xs:attribute type="xs:string" name="name" />
 	</xs:complexType>
 	<xs:complexType name="activityType">
 		<xs:sequence>

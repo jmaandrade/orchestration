@@ -9,6 +9,8 @@ import java.util.Map;
 
 import org.w3c.dom.Document;
 
+import pt.jma.common.IMapUtil;
+import pt.jma.common.MapUtil;
 import pt.jma.common.ReflectionUtil;
 import pt.jma.common.xml.SerializationUtils;
 import pt.jma.common.xml.XMLUtils;
@@ -16,7 +18,6 @@ import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.activity.config.ActivityType;
 import pt.jma.orchestration.activity.config.BindType;
 import pt.jma.orchestration.activity.config.EventType;
-import pt.jma.orchestration.activity.util.PropertiesUtil;
 import pt.jma.orchestration.context.config.AdapterConfigType;
 import pt.jma.orchestration.context.config.ContextType;
 import pt.jma.orchestration.context.config.ConverterType;
@@ -26,10 +27,11 @@ import pt.jma.orchestration.context.config.ServiceType;
 import pt.jma.orchestration.exception.InvalidStartException;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.result.config.ResultType;
+import pt.jma.orchestration.util.PropertiesUtil;
 
 public class ActivityContext implements IActivityContext {
 
-	public static Map<String, IActivitySettings> mapActivitySettings = new HashMap<String, IActivitySettings>();
+	public Map<String, IActivitySettings> mapActivitySettings = new HashMap<String, IActivitySettings>();
 
 	Map<String, String> properties = new HashMap<String, String>();
 	Map<String, ConverterType> converters = new HashMap<String, ConverterType>();
@@ -203,7 +205,6 @@ public class ActivityContext implements IActivityContext {
 							|| instance.getActionMap().containsKey(instance.getStart()) == false)
 						throw new InvalidStartException();
 
-					instance.setActivityContext(this);
 					instance.setName(name);
 
 					mapActivitySettings.put(name, instance);
@@ -211,7 +212,7 @@ public class ActivityContext implements IActivityContext {
 				} else {
 					instance = mapActivitySettings.get(name);
 				}
-
+				instance.setActivityContext(this);
 				return instance;
 			}
 
@@ -263,6 +264,14 @@ public class ActivityContext implements IActivityContext {
 	@Override
 	public Map<String, ServiceType> getServices() throws Exception {
 		return this.services;
+	}
+
+	IMapUtil state = new MapUtil();
+
+	@Override
+	public IMapUtil getState() {
+
+		return state;
 	}
 
 }

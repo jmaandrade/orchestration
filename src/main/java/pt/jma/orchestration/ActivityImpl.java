@@ -15,7 +15,6 @@ import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.activity.config.BindType;
 import pt.jma.orchestration.activity.config.ForwardType;
 import pt.jma.orchestration.activity.config.StateType;
-import pt.jma.orchestration.activity.util.PropertiesUtil;
 import pt.jma.orchestration.adapter.interceptor.AbstractServiceInterceptor;
 import pt.jma.orchestration.context.IConverter;
 import pt.jma.orchestration.context.config.InterceptorConfigType;
@@ -27,6 +26,9 @@ import pt.jma.orchestration.exception.InvalidScopeException;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.exception.OutcomeNotFoundException;
 import pt.jma.orchestration.result.config.ResultType;
+import pt.jma.orchestration.util.PropertiesUtil;
+import pt.jma.orchestration.util.thread.ThreadActivity;
+import pt.jma.orchestration.util.thread.IThreadActivityCaller;
 
 public class ActivityImpl implements IActivity {
 
@@ -76,6 +78,8 @@ public class ActivityImpl implements IActivity {
 
 		if (!scope.containsKey("state"))
 			scope.put("state", state);
+
+		scope.put("global-state", this.getSettings().getActivityContext().getState());
 
 		scope.put("input-message", request);
 		scope.put("input-message-context", request.getContext());
@@ -272,8 +276,8 @@ public class ActivityImpl implements IActivity {
 				if (bindType.getScopeFrom() != null)
 					scopeFrom = bindType.getScopeFrom();
 
-				if (!(scopeFrom.equals("state") || scopeFrom.equals("input-message") || scopeFrom.equals("properties") || scopeFrom
-						.equals("context")))
+				if (!(scopeFrom.equals("state") || scopeFrom.equals("input-message") || scopeFrom.equals("properties")
+						|| scopeFrom.equals("context") || scopeFrom.equals("global-state")))
 					throw new InvalidScopeException(scopeFrom);
 
 				String scopeTo = "input-action-message";
@@ -281,7 +285,8 @@ public class ActivityImpl implements IActivity {
 				if (bindType.getScopeTo() != null)
 					scopeTo = bindType.getScopeTo();
 
-				if (!(scopeTo.equals("state") || scopeTo.equals("input-action-message") || scopeTo.equals("context")))
+				if (!(scopeTo.equals("state") || scopeTo.equals("input-action-message") || scopeTo.equals("context") || scopeTo
+						.equals("global-state")))
 					throw new InvalidScopeException(scopeTo);
 
 				this.bindScope(bindType, (scopeFrom.equals("context") ? "input-message-context" : scopeFrom),
@@ -304,8 +309,8 @@ public class ActivityImpl implements IActivity {
 				if (bindType.getScopeFrom() != null)
 					scopeFrom = bindType.getScopeFrom();
 
-				if (!(scopeFrom.equals("state") || scopeFrom.equals("output-action-message") || scopeFrom.equals("properties") || scopeFrom
-						.equals("context")))
+				if (!(scopeFrom.equals("state") || scopeFrom.equals("output-action-message") || scopeFrom.equals("properties")
+						|| scopeFrom.equals("context") || scopeFrom.equals("global-state")))
 					throw new InvalidScopeException(scopeFrom);
 
 				String scopeTo = "output-message";
@@ -313,7 +318,8 @@ public class ActivityImpl implements IActivity {
 				if (bindType.getScopeTo() != null)
 					scopeTo = bindType.getScopeTo();
 
-				if (!(scopeTo.equals("state") || scopeTo.equals("output-message") || scopeTo.equals("context")))
+				if (!(scopeTo.equals("state") || scopeTo.equals("global-state") || scopeTo.equals("output-message") || scopeTo
+						.equals("context")))
 					throw new InvalidScopeException(scopeTo);
 
 				this.bindScope(bindType, (scopeFrom.equals("context") ? "output-action-message-context" : scopeFrom),
@@ -325,14 +331,21 @@ public class ActivityImpl implements IActivity {
 
 	private void bindScope(BindType bindType, String scopeFrom, String scopeTo) throws Exception {
 
-		Serializable value = (Serializable) scope.get(scopeFrom).get(bindType.getFrom());
+		synchronized (scope.get(scopeFrom)) {
+			synchronized (scope.get(scopeTo)) {
 
-		if (bindType.getConverter() != null) {
-			value = (Serializable) ActivityImpl.getConverter(this.getSettings(), bindType).convert(Object.class, value);
-		}
+				if (scope.get(scopeFrom).containsKey(bindType.getFrom())) {
 
-		if (scope.get(scopeFrom).containsKey(bindType.getFrom())) {
-			scope.get(scopeTo).put(bindType.getTo(), value);
+					Serializable value = (Serializable) scope.get(scopeFrom).get(bindType.getFrom());
+
+					if (bindType.getConverter() != null) {
+						value = (Serializable) ActivityImpl.getConverter(this.getSettings(), bindType).convert(Object.class, value);
+					}
+
+					scope.get(scopeTo).put(bindType.getTo(), value);
+				}
+
+			}
 		}
 	}
 
@@ -356,8 +369,7 @@ public class ActivityImpl implements IActivity {
 				if (state.containsKey(stateType.getName()) == false)
 					state.put(stateType.getName(), "");
 
-				if (stateType.getFrom() == null || stateType.getFrom().isEmpty()
-						|| state.get(stateType.getName()).equals(stateType.getFrom()))
+				if (stateType.getFrom() == null || state.get(stateType.getName()).equals(stateType.getFrom()))
 					state.put(stateType.getName(), stateType.getTo());
 			}
 	}
@@ -367,6 +379,19 @@ public class ActivityImpl implements IActivity {
 			uUID = UUID.randomUUID();
 
 		return uUID;
+	}
+
+	@Override
+	public ThreadActivity invokeAsynchr(IRequest request) throws Throwable {
+
+		ThreadActivity instance = new ThreadActivity(this, request, new IThreadActivityCaller() {
+			@Override
+			public boolean notifyThreadEnd() {
+				return true;
+			}
+		});
+		instance.start();
+		return instance;
 	}
 
 }

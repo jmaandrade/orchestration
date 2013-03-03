@@ -2,6 +2,7 @@ package pt.jma.orchestration;
 
 import java.util.Map;
 
+import pt.jma.common.IMapUtil;
 import pt.jma.orchestration.context.config.AdapterConfigType;
 import pt.jma.orchestration.context.config.ConverterType;
 import pt.jma.orchestration.context.config.InterceptorConfigType;
@@ -10,6 +11,8 @@ import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.result.config.ResultType;
 
 public interface IActivityContext {
+
+	IMapUtil getState();
 
 	Map<String, AdapterConfigType> getAdapters() throws Exception;
 
