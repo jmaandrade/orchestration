@@ -1,7 +1,7 @@
 orchestration
 =============
 
-(Draft) Service Orchestration Framework versão 2.1.0
+Service Orchestration Framework versão 2.3.0
 
 Esta obra foi licenciada com uma Licença GNU General Public License.
 
