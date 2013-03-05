@@ -27,8 +27,8 @@ import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.exception.OutcomeNotFoundException;
 import pt.jma.orchestration.result.config.ResultType;
 import pt.jma.orchestration.util.PropertiesUtil;
-import pt.jma.orchestration.util.thread.ThreadActivity;
 import pt.jma.orchestration.util.thread.IThreadActivityCaller;
+import pt.jma.orchestration.util.thread.ThreadActivity;
 
 public class ActivityImpl implements IActivity {
 

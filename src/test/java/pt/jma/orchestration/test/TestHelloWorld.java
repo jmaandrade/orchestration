@@ -91,4 +91,26 @@ public class TestHelloWorld {
 		}
 	}
 
+	@Test
+	public void test_4() {
+		try {
+			IActivityContext context = new ActivityContext(new URI("src/test/resources/context.xml"));
+
+			IActivity activity = context.lookup("teste2");
+			IRequest request = new Request();
+			request.getContext().put("language", "pt_PT");
+			request.put("name", "jma1");
+			IResponse response = activity.invoke(request);
+
+			assertNotNull(response.get("sayHi"));
+			assertNotNull(response.get("estado"));
+
+			System.out.printf("\ntest_4() %s estado=%s\n\n", (String) response.get("sayHi"), (String) response.get("estado"));
+
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+			fail(ex.getMessage());
+		}
+	}
+
 }
