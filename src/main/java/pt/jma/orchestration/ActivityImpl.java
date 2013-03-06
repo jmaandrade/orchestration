@@ -198,7 +198,7 @@ public class ActivityImpl implements IActivity {
 
 							ResultType result = this.settings.getResultsMap().get("outcome").get(responseService.getOutcome());
 
-							if (result.getTargetType().equalsIgnoreCase("action")) {
+							if (result.getTargetType() != null && result.getTargetType().equalsIgnoreCase("action")) {
 								nextAction = result.getTargetName();
 							}
 

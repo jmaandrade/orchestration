@@ -12,16 +12,16 @@
 				<xact:output />
 			</xact:binds>
 			<xact:forwards>
-				<xact:forward outcome="local" action="hello-world-action" event="prepara-resposta-pt"/>
-				<xact:forward outcome="international" action="hello-world-action" event="prepara-resposta-en"/>
+				<xact:forward outcome="local" action="hello-world-action" event="prepara-resposta-pt" />
+				<xact:forward outcome="international" action="hello-world-action" event="prepara-resposta-en" />
 			</xact:forwards>
 		</xact:action>
 
-		<xact:action name="hello-world-action" service="teste" event="final">
+		<xact:action name="hello-world-action" service="teste">
 			<xact:target class="pt.jma.orchestration.test.HelloWorld2" method="execute" />
 			<xact:binds>
 				<xact:input>
-				    <xact:bind from="mask" scopeFrom="state" to="mask" />
+					<xact:bind from="mask" scopeFrom="state" to="mask" />
 					<xact:bind from="name" to="name" />
 				</xact:input>
 				<xact:output>
@@ -32,37 +32,40 @@
 
 	</xact:actions>
 
-	<xact:results />
+	<xact:results>
+		<xact:result name="ok" type="outcome" event="final"/>
+	</xact:results>
 
-	<xact:binds>
-		<xact:input />
-		<xact:output>
-			<xact:bind from="estado" scopeFrom="state" to="estado" />
-		</xact:output>
 
-	</xact:binds>
+		<xact:binds>
+			<xact:input />
+			<xact:output>
+				<xact:bind from="estado" scopeFrom="state" to="estado" />
+			</xact:output>
 
-	<xact:events>
+		</xact:binds>
 
-		<xact:event name="inicio">
-			<xact:state name="estado" to="execucao" />
-		</xact:event>
-		
-		<xact:event name="prepara-resposta-pt">
-			<xact:state name="mask" to="Olá %s" />
-			<xact:state name="estado" from="execucao" to="execucao-pt" />
-		</xact:event>
+		<xact:events>
 
-		<xact:event name="prepara-resposta-en">
-			<xact:state name="mask" to="Hi %s" />
-			<xact:state name="estado" from="execucao" to="execucao-en" />
-		</xact:event>
+			<xact:event name="inicio">
+				<xact:state name="estado" to="execucao" />
+			</xact:event>
 
-		<xact:event name="final">
-			<xact:state name="estado" from="execucao-pt" to="executado-pt" />
-			<xact:state name="estado" from="execucao-en" to="executado-en" />
-		</xact:event>
+			<xact:event name="prepara-resposta-pt">
+				<xact:state name="mask" to="Olá %s" />
+				<xact:state name="estado" from="execucao" to="execucao-pt" />
+			</xact:event>
 
-	</xact:events>
+			<xact:event name="prepara-resposta-en">
+				<xact:state name="mask" to="Hi %s" />
+				<xact:state name="estado" from="execucao" to="execucao-en" />
+			</xact:event>
+
+			<xact:event name="final">
+				<xact:state name="estado" from="execucao-pt" to="executado-pt" />
+				<xact:state name="estado" from="execucao-en" to="executado-en" />
+			</xact:event>
+
+		</xact:events>
 
 </xact:activity>
