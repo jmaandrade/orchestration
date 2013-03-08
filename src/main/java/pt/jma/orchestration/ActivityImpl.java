@@ -1,20 +1,18 @@
 package pt.jma.orchestration;
 
-import java.io.Serializable;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import pt.jma.common.IMapUtil;
 import pt.jma.common.MapUtil;
 import pt.jma.common.ReflectionUtil;
+import pt.jma.common.collection.CollectionUtil;
 import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.activity.config.BindType;
 import pt.jma.orchestration.activity.config.ForwardType;
-import pt.jma.orchestration.activity.config.StateType;
 import pt.jma.orchestration.adapter.interceptor.AbstractServiceInterceptor;
 import pt.jma.orchestration.context.IConverter;
 import pt.jma.orchestration.context.config.InterceptorConfigType;
@@ -22,7 +20,6 @@ import pt.jma.orchestration.context.config.InterceptorType;
 import pt.jma.orchestration.context.config.ServiceType;
 import pt.jma.orchestration.exception.ActionNotFoundException;
 import pt.jma.orchestration.exception.EventNotFoundException;
-import pt.jma.orchestration.exception.InvalidScopeException;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.exception.OutcomeNotFoundException;
 import pt.jma.orchestration.result.config.ResultType;
@@ -68,10 +65,37 @@ public class ActivityImpl implements IActivity {
 	public ActivityImpl(IActivitySettings settings) {
 		super();
 		this.settings = settings;
+
+		inputScopesFrom.put("", "input-message");
+		inputScopesFrom.put("state", "state");
+		inputScopesFrom.put("global-state", "global-state");
+		inputScopesFrom.put("properties", "properties");
+		inputScopesFrom.put("context", "input-message-context");
+
+		inputScopesTo.put("", "input-action-message");
+		inputScopesTo.put("state", "state");
+		inputScopesTo.put("global-state", "global-state");
+		inputScopesTo.put("context", "input-action-message-context");
+
+		outputScopesFrom.put("", "output-action-message");
+		outputScopesFrom.put("state", "state");
+		outputScopesFrom.put("global-state", "global-state");
+		outputScopesFrom.put("properties", "properties");
+		outputScopesFrom.put("context", "output-action-message-context");
+
+		outputScopesTo.put("", "output-message");
+		outputScopesTo.put("state", "state");
+		outputScopesTo.put("global-state", "global-state");
+		outputScopesTo.put("context", "output-message-context");
+
 	}
 
 	Map<String, IMapUtil> scope = new HashMap<String, IMapUtil>();
 	IMapUtil state = new MapUtil();
+	Map<String, String> inputScopesFrom = new HashMap<String, String>();
+	Map<String, String> inputScopesTo = new HashMap<String, String>();
+	Map<String, String> outputScopesFrom = new HashMap<String, String>();
+	Map<String, String> outputScopesTo = new HashMap<String, String>();
 
 	@Override
 	public synchronized IResponse invoke(IRequest request) throws Throwable {
@@ -96,7 +120,7 @@ public class ActivityImpl implements IActivity {
 		if (!scope.containsKey("properties"))
 			scope.put("properties", this.settings.getProperties());
 
-		inputBind(this.settings.getInputBinds());
+		CollectionUtil.map(this.getSettings().getInputBinds(), new BindProcessor(this, inputScopesFrom, inputScopesTo));
 
 		if (this.settings.getStartActivityEvent() != null)
 			this.triggerEvent(this.settings.getStartActivityEvent());
@@ -157,7 +181,7 @@ public class ActivityImpl implements IActivity {
 				scope.put("input-action-message", serviceRequest);
 				scope.put("input-action-message-context", serviceRequest.getContext());
 
-				inputBind(actionType.getBinds().getInputBind());
+				CollectionUtil.map(actionType.getBinds().getInputBind(), new BindProcessor(this, inputScopesFrom, inputScopesTo));
 
 				IResponse responseService = serviceInvocationInstance.invoke(serviceRequest);
 
@@ -166,7 +190,7 @@ public class ActivityImpl implements IActivity {
 				scope.put("output-action-message", responseService);
 				scope.put("output-action-message-context", responseService.getContext());
 
-				ouputBind(actionType.getBinds().getOutputBind());
+				CollectionUtil.map(actionType.getBinds().getOutputBind(), new BindProcessor(this, outputScopesFrom, outputScopesTo));
 
 				nextAction = "";
 				ForwardType forwardType = null;
@@ -258,120 +282,22 @@ public class ActivityImpl implements IActivity {
 			}
 		}
 
-		ouputBind(this.getSettings().getOutputBinds());
+		CollectionUtil.map(this.getSettings().getOutputBinds(), new BindProcessor(this, outputScopesFrom, outputScopesTo));
+
 		return response;
 
 	}
 
-	private void inputBind(List<BindType> binds) throws Exception {
-
-		if (binds != null) {
-			Iterator<BindType> iterator = binds.iterator();
-
-			while (iterator.hasNext()) {
-				BindType bindType = iterator.next();
-
-				String scopeFrom = "input-message";
-
-				if (bindType.getScopeFrom() != null)
-					scopeFrom = bindType.getScopeFrom();
-
-				if (!(scopeFrom.equals("state") || scopeFrom.equals("input-message") || scopeFrom.equals("properties")
-						|| scopeFrom.equals("context") || scopeFrom.equals("global-state")))
-					throw new InvalidScopeException(scopeFrom);
-
-				String scopeTo = "input-action-message";
-
-				if (bindType.getScopeTo() != null)
-					scopeTo = bindType.getScopeTo();
-
-				if (!(scopeTo.equals("state") || scopeTo.equals("input-action-message") || scopeTo.equals("context") || scopeTo
-						.equals("global-state")))
-					throw new InvalidScopeException(scopeTo);
-
-				this.bindScope(bindType, (scopeFrom.equals("context") ? "input-message-context" : scopeFrom),
-						(scopeTo.equals("context") ? "input-action-message-context" : scopeTo));
-			}
-		}
-
-	}
-
-	private void ouputBind(List<BindType> binds) throws Exception {
-
-		if (binds != null) {
-			Iterator<BindType> iterator = binds.iterator();
-
-			while (iterator.hasNext()) {
-				BindType bindType = iterator.next();
-
-				String scopeFrom = "output-action-message";
-
-				if (bindType.getScopeFrom() != null)
-					scopeFrom = bindType.getScopeFrom();
-
-				if (!(scopeFrom.equals("state") || scopeFrom.equals("output-action-message") || scopeFrom.equals("properties")
-						|| scopeFrom.equals("context") || scopeFrom.equals("global-state")))
-					throw new InvalidScopeException(scopeFrom);
-
-				String scopeTo = "output-message";
-
-				if (bindType.getScopeTo() != null)
-					scopeTo = bindType.getScopeTo();
-
-				if (!(scopeTo.equals("state") || scopeTo.equals("global-state") || scopeTo.equals("output-message") || scopeTo
-						.equals("context")))
-					throw new InvalidScopeException(scopeTo);
-
-				this.bindScope(bindType, (scopeFrom.equals("context") ? "output-action-message-context" : scopeFrom),
-						(scopeTo.equals("context") ? "output-message-context" : scopeTo));
-			}
-		}
-
-	}
-
-	private void bindScope(BindType bindType, String scopeFrom, String scopeTo) throws Exception {
-
-		synchronized (scope.get(scopeFrom)) {
-			synchronized (scope.get(scopeTo)) {
-
-				if (scope.get(scopeFrom).containsKey(bindType.getFrom())) {
-
-					Serializable value = (Serializable) scope.get(scopeFrom).get(bindType.getFrom());
-
-					if (bindType.getConverter() != null) {
-						value = (Serializable) ActivityImpl.getConverter(this.getSettings(), bindType).convert(Object.class, value);
-					}
-
-					scope.get(scopeTo).put(bindType.getTo(), value);
-				}
-
-			}
-		}
-	}
-
-	private void triggerEvent(String name) throws Exception {
+	private void triggerEvent(String name) throws Throwable {
 
 		if (name != null) {
 
 			if (!this.settings.getEventsMap().containsKey(name))
 				throw new EventNotFoundException(name);
 
-			this.stateTransition(this.settings.getEventsMap().get(name).getStates());
+			CollectionUtil.map(this.settings.getEventsMap().get(name).getStates(), new StateProcessor(this));
 		}
 
-	}
-
-	private void stateTransition(List<StateType> list) throws Exception {
-
-		if (list.size() > 0)
-			for (StateType stateType : list.toArray(new StateType[list.size()])) {
-
-				if (state.containsKey(stateType.getName()) == false)
-					state.put(stateType.getName(), "");
-
-				if (stateType.getFrom() == null || state.get(stateType.getName()).equals(stateType.getFrom()))
-					state.put(stateType.getName(), stateType.getTo());
-			}
 	}
 
 	public UUID getUUID() {

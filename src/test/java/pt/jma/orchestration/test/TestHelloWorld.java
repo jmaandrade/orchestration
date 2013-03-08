@@ -67,7 +67,7 @@ public class TestHelloWorld {
 			IActivityContext context = new ActivityContext(new URI("src/test/resources/context.xml"));
 			ThreadPoolActivity pool = new ThreadPoolActivity(Executors.newFixedThreadPool(5));
 
-			for (int i = 0; i < 200; i++) {
+			for (int i = 0; i < 2; i++) {
 				IRequest request = new Request();
 				request.put("name", String.format("jmandrade-%d", i));
 				IActivity activity = context.lookup("teste");
@@ -76,9 +76,11 @@ public class TestHelloWorld {
 			pool.wait4AllResponses(5000);
 
 			CollectionUtil.map(pool.getList(), new IMapProcessor<ThreadActivity>() {
-				public void execute(ThreadActivity t) throws Throwable {
+				public boolean execute(ThreadActivity t) throws Throwable {
 					if (t.getResponse() != null)
 						System.out.printf("test_3() t.getResponse().get(sayHi)=%s\n", t.getResponse().get("sayHi"));
+
+					return true;
 
 				}
 			});

@@ -1,18 +1,18 @@
 package pt.jma.orchestration.activity.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StateType {
 
 	@XmlAttribute
 	protected String name;
-	@XmlAttribute
-	protected String from = "";
-	@XmlAttribute
-	protected String to = "";
 
 	public String getName() {
 		return name;
@@ -22,20 +22,14 @@ public class StateType {
 		this.name = name;
 	}
 
-	public String getFrom() {
-		return from;
-	}
+	@XmlElement(name = "transition", type = TransitionType.class, namespace = "urn:pt.jma.orchestration.activity")
+	protected List<TransitionType> transitions;
 
-	public void setFrom(String from) {
-		this.from = from;
-	}
-
-	public String getTo() {
-		return to;
-	}
-
-	public void setTo(String to) {
-		this.to = to;
+	public List<TransitionType> getTransitions() {
+		if (transitions == null) {
+			transitions = new ArrayList<TransitionType>();
+		}
+		return this.transitions;
 	}
 
 }
