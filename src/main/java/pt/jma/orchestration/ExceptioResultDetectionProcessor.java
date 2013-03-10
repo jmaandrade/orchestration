@@ -19,7 +19,7 @@ public class ExceptioResultDetectionProcessor implements IReduceProcessor<String
 			Throwable ex = t;
 			while (ex != null) {
 				if (Class.forName(key).isInstance(ex)) {
-					result = activity.getSettings().getResultsMap().get("exception").get(key);
+					return activity.getSettings().getResultsMap().get("exception").get(key);
 				}
 
 				ex = ex.getCause();
