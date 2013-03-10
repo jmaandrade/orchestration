@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<xact:activity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xact="urn:pt.jma.orchestration.activity"  parent="teste3Avo">
+	<xact:properties>
+		<xact:property name="mask-pt"><![CDATA[Olá %s]]></xact:property>
+		<xact:property name="mask-en"><![CDATA[Hi %s]]></xact:property>
+	</xact:properties>
+	
+	<xact:actions start="detect-language">
+
+		<xact:action name="detect-language" service="teste">
+			<xact:target class="pt.jma.orchestration.test.HelloWorld2" method="detectLanguage" />
+			<xact:binds>
+				<xact:input>
+					<xact:bind from="language" scopeFrom="context" to="language" />
+				</xact:input>
+				<xact:output />
+			</xact:binds>
+			<xact:forwards>
+				<xact:forward outcome="local" action="hello-world-action" event="prepara-resposta-pt" />
+				<xact:forward outcome="international" action="hello-world-action" event="prepara-resposta-en" />
+			</xact:forwards>
+		</xact:action>
+
+		<xact:action name="hello-world-action" service="teste">
+			<xact:target class="pt.jma.orchestration.test.HelloWorld2" method="execute" />
+			<xact:binds>
+				<xact:input>
+					<xact:bind from="mask" scopeFrom="state" to="mask" />
+					<xact:bind from="name" to="name" />
+				</xact:input>
+				<xact:output>
+					<xact:bind from="sayHi" to="sayHi" />
+				</xact:output>
+			</xact:binds>
+		</xact:action>
+
+	</xact:actions>
+
+	<xact:results/>
+
+
+
+		<xact:binds>
+			<xact:input />
+			<xact:output/>
+		</xact:binds>
+
+		<xact:events>
+
+			<xact:event name="prepara-resposta-pt">
+				<xact:state name="estado">
+					<xact:transition current="execucao" next="execucao-pt">
+						<xact:bind from="mask-pt" scopeFrom="properties" to="mask" scopeTo="state" />
+					</xact:transition>
+				</xact:state>
+			</xact:event>
+
+			<xact:event name="prepara-resposta-en">
+				<xact:state name="estado">
+					<xact:transition current="execucao" next="execucao-en">
+						<xact:bind from="mask-en" scopeFrom="properties" to="mask" scopeTo="state" />
+					</xact:transition>
+				</xact:state>
+			</xact:event>
+
+			<xact:event name="final">
+				<xact:state name="estado">
+					<xact:transition current="execucao-pt" next="executado-pt"/>
+					<xact:transition current="execucao-en" next="executado-en"/>
+				</xact:state>
+			</xact:event>
+
+		</xact:events>
+
+</xact:activity>
