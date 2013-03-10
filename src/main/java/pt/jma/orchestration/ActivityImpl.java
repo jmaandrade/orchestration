@@ -249,7 +249,7 @@ public class ActivityImpl implements IActivity {
 				if (this.getSettings().getResultsMap().containsKey("exception")) {
 
 					result = CollectionUtil.first(this.getSettings().getResultsMap().get("exception").keySet(),
-							new ExceptioResultDetectionProcessor(this, ex));
+							new ExceptionResultDetectionProcessor(this, ex));
 
 					if (result != null) {
 						nextAction = (result.getTargetName() != null ? result.getTargetName() : "");

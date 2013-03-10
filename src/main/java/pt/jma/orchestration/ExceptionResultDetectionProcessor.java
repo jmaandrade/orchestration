@@ -3,11 +3,11 @@ package pt.jma.orchestration;
 import pt.jma.common.collection.IReduceProcessor;
 import pt.jma.orchestration.result.config.ResultType;
 
-public class ExceptioResultDetectionProcessor implements IReduceProcessor<String, ResultType> {
+public class ExceptionResultDetectionProcessor implements IReduceProcessor<String, ResultType> {
 	IActivity activity;
 	Throwable t;
 
-	public ExceptioResultDetectionProcessor(IActivity activity, Throwable t) {
+	public ExceptionResultDetectionProcessor(IActivity activity, Throwable t) {
 		super();
 		this.activity = activity;
 		this.t = t;
