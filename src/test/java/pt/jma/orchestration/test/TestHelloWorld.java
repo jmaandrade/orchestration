@@ -67,7 +67,7 @@ public class TestHelloWorld {
 			IActivityContext context = new ActivityContext(new URI("src/test/resources/context.xml"));
 			ThreadPoolActivity pool = new ThreadPoolActivity(Executors.newFixedThreadPool(5));
 
-			for (int i = 0; i < 2; i++) {
+			for (int i = 0; i < 20; i++) {
 				IRequest request = new Request();
 				request.put("name", String.format("jmandrade-%d", i));
 				IActivity activity = context.lookup("teste");
@@ -131,6 +131,25 @@ public class TestHelloWorld {
 			assertNotNull(response.get("estado2"));
 
 			System.out.printf("\ntest_5() %s estado=%s\n\n", (String) response.get("sayHi"), (String) response.get("estado"));
+
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+			fail(ex.getMessage());
+		}
+	}
+
+	@Test
+	public void test_6() {
+		try {
+			IActivityContext context = new ActivityContext(new URI("src/test/resources/context.xml"));
+
+			IActivity activity = context.lookup("teste4");
+			IRequest request = new Request();
+			IResponse response = activity.invoke(request);
+
+			assertNotNull(response.get("estado"));
+
+			System.out.printf("\ntest_6() estado=%s\n\n", (String) response.get("estado"));
 
 		} catch (Throwable ex) {
 			ex.printStackTrace();

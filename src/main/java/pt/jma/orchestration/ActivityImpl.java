@@ -2,7 +2,6 @@ package pt.jma.orchestration;
 
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -244,46 +243,26 @@ public class ActivityImpl implements IActivity {
 
 			} catch (OrchestrationException ex) {
 				throw ex;
-			} catch (Exception ex) {
-				nextAction = "";
-				// FIXME
-				ex.printStackTrace();
+			} catch (Throwable ex) {
+				ResultType result = null;
 
 				if (this.getSettings().getResultsMap().containsKey("exception")) {
 
-					Iterator<String> iterator = this.getSettings().getResultsMap().get("exception").keySet().iterator();
+					result = CollectionUtil.first(this.getSettings().getResultsMap().get("exception").keySet(),
+							new ExceptioResultDetectionProcessor(this, ex));
 
-					while (iterator.hasNext()) {
-
-						String key = iterator.next();
-						try {
-							Throwable t = ex;
-
-							while (t != null) {
-								if (Class.forName(key).isInstance(t)) {
-
-									ResultType result = this.getSettings().getResultsMap().get("exception").get(key);
-
-									if (result.getTargetType().equalsIgnoreCase("action")) {
-
-										nextAction = result.getTargetName();
-									}
-									this.triggerEvent(result.getEvent());
-								}
-
-								t = t.getCause();
-							}
-
-						} catch (ClassNotFoundException classNotFound) {
-						}
-
+					if (result != null) {
+						nextAction = (result.getTargetName() != null ? result.getTargetName() : "");
+						this.triggerEvent(result.getEvent());
 					}
 
 				}
 
-				if (nextAction.isEmpty())
+				if (result == null)
 					throw ex.getCause();
 
+				if (nextAction.isEmpty())
+					break;
 			}
 		}
 
