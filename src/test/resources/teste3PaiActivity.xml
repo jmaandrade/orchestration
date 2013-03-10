@@ -63,13 +63,6 @@
 				</xact:state>
 			</xact:event>
 
-			<xact:event name="final">
-				<xact:state name="estado">
-					<xact:transition current="execucao-pt" next="executado-pt"/>
-					<xact:transition current="execucao-en" next="executado-en"/>
-				</xact:state>
-			</xact:event>
-
 		</xact:events>
 
 </xact:activity>

@@ -15,22 +15,6 @@
 
 		<xact:events>
 
-			<xact:event name="prepara-resposta-pt">
-				<xact:state name="estado">
-					<xact:transition current="execucao" next="execucao-pt">
-						<xact:bind from="mask-pt" scopeFrom="properties" to="mask" scopeTo="state" />
-					</xact:transition>
-				</xact:state>
-			</xact:event>
-
-			<xact:event name="prepara-resposta-en">
-				<xact:state name="estado">
-					<xact:transition current="execucao" next="execucao-en">
-						<xact:bind from="mask-en" scopeFrom="properties" to="mask" scopeTo="state" />
-					</xact:transition>
-				</xact:state>
-			</xact:event>
-
 			<xact:event name="final">
 				<xact:state name="estado">
 					<xact:transition current="execucao-pt" next="executado-pt"/>
