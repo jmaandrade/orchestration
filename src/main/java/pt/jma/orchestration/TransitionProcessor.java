@@ -13,20 +13,23 @@ public class TransitionProcessor implements IMapProcessor<TransitionType> {
 	StateType stateType;
 	IActivity activity;
 
-	Map<String, String> stateTransitionScopesFrom = new HashMap<String, String>();
-	Map<String, String> stateTransitionScopesTo = new HashMap<String, String>();
+	static Map<String, String> stateTransitionScopesFrom = new HashMap<String, String>();
+	static Map<String, String> stateTransitionScopesTo = new HashMap<String, String>();
 
-	public TransitionProcessor(IActivity activity, StateType stateType) {
-		super();
-		this.stateType = stateType;
-		this.activity = activity;
-
+	static {
 		stateTransitionScopesFrom.put("state", "state");
 		stateTransitionScopesFrom.put("global-state", "global-state");
 		stateTransitionScopesFrom.put("properties", "properties");
 
 		stateTransitionScopesTo.put("state", "state");
 		stateTransitionScopesTo.put("global-state", "global-state");
+	}
+
+	public TransitionProcessor(IActivity activity, StateType stateType) {
+		super();
+		this.stateType = stateType;
+		this.activity = activity;
+
 	}
 
 	@Override

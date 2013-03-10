@@ -66,6 +66,18 @@ public class ActivityImpl implements IActivity {
 		super();
 		this.settings = settings;
 
+	}
+
+	Map<String, IMapUtil> scope = new HashMap<String, IMapUtil>();
+	IMapUtil state = new MapUtil();
+
+	static Map<String, String> inputScopesFrom = new HashMap<String, String>();
+	static Map<String, String> inputScopesTo = new HashMap<String, String>();
+	static Map<String, String> outputScopesFrom = new HashMap<String, String>();
+	static Map<String, String> outputScopesTo = new HashMap<String, String>();
+
+	static {
+
 		inputScopesFrom.put("", "input-message");
 		inputScopesFrom.put("state", "state");
 		inputScopesFrom.put("global-state", "global-state");
@@ -89,13 +101,6 @@ public class ActivityImpl implements IActivity {
 		outputScopesTo.put("context", "output-message-context");
 
 	}
-
-	Map<String, IMapUtil> scope = new HashMap<String, IMapUtil>();
-	IMapUtil state = new MapUtil();
-	Map<String, String> inputScopesFrom = new HashMap<String, String>();
-	Map<String, String> inputScopesTo = new HashMap<String, String>();
-	Map<String, String> outputScopesFrom = new HashMap<String, String>();
-	Map<String, String> outputScopesTo = new HashMap<String, String>();
 
 	@Override
 	public synchronized IResponse invoke(IRequest request) throws Throwable {

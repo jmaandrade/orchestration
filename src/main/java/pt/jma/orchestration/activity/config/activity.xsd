@@ -36,7 +36,7 @@
 					</xsd:simpleType>
 				</xs:attribute>
 				<xs:attribute type="xs:string" name="from" />
-				<xs:attribute type="xs:string" name="scopeTo" use="optional" >
+				<xs:attribute type="xs:string" name="scopeTo" use="optional">
 					<xsd:simpleType>
 						<xsd:restriction base="xsd:string">
 							<xsd:enumeration value="scope" />
@@ -68,13 +68,17 @@
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="stateType">
-		<xs:simpleContent>
-			<xs:extension base="xs:string">
-				<xs:attribute type="xs:string" name="name" />
-				<xs:attribute type="xs:string" name="from" use="optional" />
-				<xs:attribute type="xs:string" name="to"/>
-			</xs:extension>
-		</xs:simpleContent>
+		<xs:sequence>
+			<xs:element type="pt:transitionType" name="transition" xmlns:pt="urn:pt.jma.orchestration.activity" />
+		</xs:sequence>
+		<xs:attribute type="xs:string" name="name" />
+	</xs:complexType>
+		<xs:complexType name="transitionType">
+		<xs:sequence>
+			<xs:element type="pt:bindType" name="bind" maxOccurs="unbounded" minOccurs="0" xmlns:pt="urn:pt.jma.orchestration.activity" />
+		</xs:sequence>
+		<xs:attribute type="xs:string" name="current" use="optional" />
+		<xs:attribute type="xs:string" name="next" />
 	</xs:complexType>
 	<xs:complexType name="forwardType">
 		<xs:attribute type="xs:string" name="outcome" use="optional" />

@@ -115,4 +115,27 @@ public class TestHelloWorld {
 		}
 	}
 
+	@Test
+	public void test_5() {
+		try {
+			IActivityContext context = new ActivityContext(new URI("src/test/resources/context.xml"));
+
+			IActivity activity = context.lookup("teste3");
+			IRequest request = new Request();
+			request.getContext().put("language", "pt_PT");
+			request.put("name", "jma5");
+			IResponse response = activity.invoke(request);
+
+			assertNotNull(response.get("sayHi"));
+			assertNotNull(response.get("estado"));
+			assertNotNull(response.get("estado2"));
+
+			System.out.printf("\ntest_5() %s estado=%s\n\n", (String) response.get("sayHi"), (String) response.get("estado"));
+
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+			fail(ex.getMessage());
+		}
+	}
+
 }
