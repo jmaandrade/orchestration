@@ -1,6 +1,5 @@
 package pt.jma.orchestration;
 
-import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,13 +10,10 @@ import org.w3c.dom.Document;
 
 import pt.jma.common.IMapUtil;
 import pt.jma.common.MapUtil;
-import pt.jma.common.ReflectionUtil;
+import pt.jma.common.collection.CollectionUtil;
 import pt.jma.common.xml.SerializationUtils;
 import pt.jma.common.xml.XMLUtils;
-import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.activity.config.ActivityType;
-import pt.jma.orchestration.activity.config.BindType;
-import pt.jma.orchestration.activity.config.EventType;
 import pt.jma.orchestration.context.config.AdapterConfigType;
 import pt.jma.orchestration.context.config.ContextType;
 import pt.jma.orchestration.context.config.ConverterType;
@@ -27,7 +23,6 @@ import pt.jma.orchestration.context.config.ServiceType;
 import pt.jma.orchestration.exception.InvalidStartException;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.result.config.ResultType;
-import pt.jma.orchestration.util.PropertiesUtil;
 
 public class ActivityContext implements IActivityContext {
 
@@ -70,40 +65,13 @@ public class ActivityContext implements IActivityContext {
 			if (contextType.getParent() != null)
 				ActivityContext.loadContextType(activityContext, new URI(contextType.getParent()));
 
-			for (PropertyType instance : contextType.getProperties().toArray(new PropertyType[contextType.getProperties().size()])) {
-				activityContext.getProperties().put(instance.getName(), instance.getValue());
-			}
-
-			for (AdapterConfigType instance : contextType.getAdaptersConfig().toArray(
-					new AdapterConfigType[contextType.getAdaptersConfig().size()])) {
-				activityContext.getAdapters().put(instance.getName(), instance);
-			}
-
-			for (InterceptorConfigType instance : contextType.getInterceptorsConfig().toArray(
-					new InterceptorConfigType[contextType.getInterceptorsConfig().size()])) {
-				activityContext.getInterceptors().put(instance.getName(), instance);
-			}
-
-			for (ServiceType instance : contextType.getServices().toArray(new ServiceType[contextType.getServices().size()])) {
-				activityContext.getServices().put(instance.getName(), instance);
-			}
-
-			for (ResultType instance : contextType.getResults().toArray(new ResultType[contextType.getResults().size()])) {
-				if (!activityContext.getResults().containsKey(instance.getType())) {
-					activityContext.getResults().put(instance.getType(), new HashMap<String, ResultType>());
-				}
-				activityContext.getResults().get(instance.getType()).put(instance.getName(), instance);
-			}
-
-			for (ConverterType instance : contextType.getConvertersConfig().toArray(
-					new ConverterType[contextType.getConvertersConfig().size()])) {
-				activityContext.getConverters().put(instance.getName(), instance);
-			}
-
-			for (InterceptorType instance : contextType.getActivityInterceptors().toArray(
-					new InterceptorType[contextType.getActivityInterceptors().size()])) {
-				activityContext.getActivityInterceptors().add(instance);
-			}
+			CollectionUtil.map(contextType.getProperties(), new PutPropertyProcessor(activityContext));
+			CollectionUtil.map(contextType.getAdaptersConfig(), new PutAdapterProcessor(activityContext));
+			CollectionUtil.map(contextType.getInterceptorsConfig(), new PutInterceptorProcessor(activityContext.getInterceptors()));
+			CollectionUtil.map(contextType.getServices(), new PutServiceProcessor(activityContext));
+			CollectionUtil.map(contextType.getResults(), new PutResultProcessor(activityContext.getResults()));
+			CollectionUtil.map(contextType.getConvertersConfig(), new PutConverterProcessor(activityContext));
+			CollectionUtil.map(contextType.getActivityInterceptors(), new AddActivityInterceptorProcessor(activityContext));
 
 		} catch (Throwable ex) {
 			throw new OrchestrationException(ex);
@@ -115,7 +83,7 @@ public class ActivityContext implements IActivityContext {
 		return activityInterceptors;
 	}
 
-	protected void loadActivityType(IActivitySettings activitySettings, String name) throws Exception {
+	protected void loadActivityType(IActivitySettings activitySettings, String name) throws Throwable {
 
 		String activityPathMask = ((String) this.properties.get("activity-name-mask"));
 		String path = this.properties.get("activity-uri");
@@ -130,35 +98,12 @@ public class ActivityContext implements IActivityContext {
 		}
 
 		if (activityType.getBinds() != null) {
-
-			if (activityType.getBinds().getInputBind() != null) {
-
-				for (BindType bindType : activityType.getBinds().getInputBind()
-						.toArray(new BindType[activityType.getBinds().getInputBind().size()])) {
-					activitySettings.getInputBinds().add(bindType);
-				}
-			}
-
-			if (activityType.getBinds().getOutputBind() != null) {
-
-				for (BindType bindType : activityType.getBinds().getOutputBind()
-						.toArray(new BindType[activityType.getBinds().getOutputBind().size()])) {
-					activitySettings.getOutputBinds().add(bindType);
-				}
-			}
+			CollectionUtil.map(activityType.getBinds().getInputBind(), new AddBindProcessor(activitySettings.getInputBinds()));
+			CollectionUtil.map(activityType.getBinds().getOutputBind(), new AddBindProcessor(activitySettings.getOutputBinds()));
 		}
 
-		if (activityType.getEvents().size() > 0) {
-			for (EventType eventType : activityType.getEvents().toArray(new EventType[activityType.getEvents().size()])) {
-				activitySettings.getEventsMap().put(eventType.getName(), eventType);
-			}
-		}
-
-		PropertyType[] arrayPropertyType = activityType.getProperties().toArray(new PropertyType[activityType.getProperties().size()]);
-
-		for (PropertyType propertyType : arrayPropertyType) {
-			activitySettings.getProperties().put(propertyType.getName(), propertyType.getValue());
-		}
+		CollectionUtil.map(activityType.getEvents(), new PutEventProcessor(activitySettings));
+		CollectionUtil.map(activityType.getProperties(), new PutActivityPropertyProcessor(activitySettings));
 
 		if (activityType.getActions().getStart() != null && activityType.getActions().getStart().isEmpty() == false) {
 			activitySettings.setStart(activityType.getActions().getStart());
@@ -167,23 +112,8 @@ public class ActivityContext implements IActivityContext {
 		if (activityType.getActions().getEvent() != null && activityType.getActions().getEvent().isEmpty() == false) {
 			activitySettings.setStartActivityEvent(activityType.getActions().getEvent());
 		}
-
-		ActionType[] array = activityType.getActions().getActionlist()
-				.toArray(new ActionType[activityType.getActions().getActionlist().size()]);
-
-		for (ActionType actionType : array) {
-			activitySettings.getActionMap().put(actionType.getName(), actionType);
-		}
-
-		ResultType[] arrayResult = activityType.getResults() == null ? new ResultType[0] : activityType.getResults().toArray(
-				new ResultType[activityType.getResults().size()]);
-
-		for (ResultType instance : arrayResult) {
-			if (!activitySettings.getResultsMap().containsKey(instance.getType())) {
-				activitySettings.getResultsMap().put(instance.getType(), new HashMap<String, ResultType>());
-			}
-			activitySettings.getResultsMap().get(instance.getType()).put(instance.getName(), instance);
-		}
+		CollectionUtil.map(activityType.getActions().getActionlist(), new PutActionProcessor(activitySettings));
+		CollectionUtil.map(activityType.getResults(), new PutResultProcessor(activitySettings.getResultsMap()));
 
 	}
 
@@ -227,23 +157,14 @@ public class ActivityContext implements IActivityContext {
 
 	@Override
 	public synchronized IActivity lookup(String name) throws Exception {
+		try {
+			IActivity instance = (IActivity) new ActivityImpl(this.getActivitySettings(name));
 
-		IActivity instance = (IActivity) new ActivityImpl(this.getActivitySettings(name));
-		for (InterceptorType interceptor : this.activityInterceptors.toArray(new InterceptorType[this.activityInterceptors.size()])) {
+			return CollectionUtil.reduce(this.activityInterceptors, new InjectInterceptoresProcessor(this), instance);
 
-			String interceptorClassName = this.interceptors.get(interceptor.getName()).getClazz();
-
-			AbstractActivityInvocationInterceptor handler = ReflectionUtil.getInstance(interceptorClassName);
-			handler.setActivity(instance);
-
-			handler.getPropertiesMap().putAll(PropertiesUtil.getPropertiesMap(interceptor.getProperties()));
-
-			instance = (IActivity) Proxy.newProxyInstance(((IActivity) instance).getClass().getClassLoader(),
-					new Class[] { IActivity.class }, handler);
+		} catch (Throwable ex) {
+			throw new Exception(ex);
 		}
-
-		return instance;
-
 	}
 
 	@Override
