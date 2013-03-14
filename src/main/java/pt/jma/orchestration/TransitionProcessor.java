@@ -3,6 +3,7 @@ package pt.jma.orchestration;
 import java.util.HashMap;
 import java.util.Map;
 
+import pt.jma.common.IMapUtil;
 import pt.jma.common.collection.CollectionUtil;
 import pt.jma.common.collection.IMapProcessor;
 import pt.jma.orchestration.activity.config.StateType;
@@ -35,16 +36,24 @@ public class TransitionProcessor implements IMapProcessor<TransitionType> {
 	@Override
 	public boolean execute(TransitionType instance) throws Throwable {
 
-		if ((instance.getCurrent() != null && this.activity.getScope().get("state").get(this.stateType.getName())
-				.equals(instance.getCurrent()))
-				|| (instance.getCurrent() == null)) {
-			this.activity.getScope().get("state").put(this.stateType.getName(), instance.getNext());
+		IMapUtil state = this.activity.getScope().get("state");
 
-			CollectionUtil.map(instance.getBinds(), new BindProcessor(this.activity, stateTransitionScopesFrom, stateTransitionScopesTo));
-
-			return false;
+		if (!state.containsKey(this.stateType.getName())) {
+			state.put(this.stateType.getName(), "");
 		}
+		synchronized (state) {
 
+			if ((instance.getCurrent() != null && state.get(this.stateType.getName()).equals(instance.getCurrent()))
+					|| (instance.getCurrent() == null)) {
+				state.put(this.stateType.getName(), instance.getNext());
+
+				CollectionUtil.map(instance.getBinds(),
+						new BindProcessor(this.activity, stateTransitionScopesFrom, stateTransitionScopesTo));
+
+				return false;
+			}
+
+		}
 		return true;
 	}
 
