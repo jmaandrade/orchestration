@@ -38,10 +38,11 @@ public class TransitionProcessor implements IMapProcessor<TransitionType> {
 
 		IMapUtil state = this.activity.getScope().get("state");
 
-		if (!state.containsKey(this.stateType.getName())) {
-			state.put(this.stateType.getName(), "");
-		}
 		synchronized (state) {
+
+			if (!state.containsKey(this.stateType.getName())) {
+				state.put(this.stateType.getName(), "");
+			}
 
 			if ((instance.getCurrent() != null && state.get(this.stateType.getName()).equals(instance.getCurrent()))
 					|| (instance.getCurrent() == null)) {
