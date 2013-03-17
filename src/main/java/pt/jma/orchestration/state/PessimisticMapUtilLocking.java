@@ -15,6 +15,7 @@ public class PessimisticMapUtilLocking extends PessimisticLocking<IMapUtil> impl
 	public <T extends Serializable> boolean compareAndSet(String key, Comparator<T> comparator, T current, T next) throws Throwable {
 
 		synchronized (this.lock) {
+
 			if (comparator.compare(((T) this.value.get(key)), current) == 0) {
 				this.value.put(key, next);
 				return true;
@@ -29,6 +30,7 @@ public class PessimisticMapUtilLocking extends PessimisticLocking<IMapUtil> impl
 
 		try {
 			synchronized (this.lock) {
+
 				this.value.put(fn.getKey(), fn.call());
 				return ((T) this.value.get(fn.getKey()));
 			}

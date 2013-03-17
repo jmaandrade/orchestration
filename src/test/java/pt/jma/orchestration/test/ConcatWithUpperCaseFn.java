@@ -16,7 +16,7 @@ public class ConcatWithUpperCaseFn extends AbstractMapUtilEntryFn<String> {
 	@Override
 	public String call() throws Throwable {
 
-		return this.getMap().get(this.getKey()).toString().concat(value).toUpperCase();
+		return (this.getMap().containsKey(this.getKey()) ? this.getMap().get(this.getKey()) : "").toString().concat(value).toUpperCase();
 	}
 
 }
