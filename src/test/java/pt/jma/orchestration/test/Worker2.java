@@ -7,10 +7,10 @@ public class Worker2 extends Thread {
 
 	Integer ID;
 	IAtomicMapUtil am;
-	AbstractMapUtilEntryFn fn;
+	AbstractMapUtilEntryFn<String> fn;
 	String prefix;
 
-	public Worker2(Integer iD, IAtomicMapUtil am, AbstractMapUtilEntryFn fn, String prefix) {
+	public Worker2(Integer iD, IAtomicMapUtil am, AbstractMapUtilEntryFn<String> fn, String prefix) {
 		super();
 		ID = iD;
 		this.am = am;

@@ -2,7 +2,7 @@ package pt.jma.orchestration.state;
 
 import pt.jma.common.IMapUtil;
 
-public abstract class AbstractMapUtilEntryFn implements IFn<String> {
+public abstract class AbstractMapUtilEntryFn<T> implements IFn<T> {
 
 	public IMapUtil getMap() {
 		return map;
@@ -23,6 +23,6 @@ public abstract class AbstractMapUtilEntryFn implements IFn<String> {
 			this.map.put(key, "");
 	}
 
-	abstract public String call() throws Throwable;
+	abstract public T call() throws Throwable;
 
 }

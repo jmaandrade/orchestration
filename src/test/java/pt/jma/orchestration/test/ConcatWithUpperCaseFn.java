@@ -3,7 +3,7 @@ package pt.jma.orchestration.test;
 import pt.jma.common.IMapUtil;
 import pt.jma.orchestration.state.AbstractMapUtilEntryFn;
 
-public class ConcatWithUpperCaseFn extends AbstractMapUtilEntryFn {
+public class ConcatWithUpperCaseFn extends AbstractMapUtilEntryFn<String> {
 
 	String value;
 

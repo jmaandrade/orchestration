@@ -25,12 +25,12 @@ public class PessimisticMapUtilLocking extends PessimisticLocking<IMapUtil> impl
 	}
 
 	@Override
-	public Serializable swapEntry(AbstractMapUtilEntryFn fn) throws Throwable {
+	public <T extends Serializable> T swapEntry(AbstractMapUtilEntryFn<T> fn) throws Throwable {
 
 		try {
 			synchronized (this.lock) {
 				this.value.put(fn.getKey(), fn.call());
-				return this.value.get(fn.getKey());
+				return ((T) this.value.get(fn.getKey()));
 			}
 		} catch (Throwable ex) {
 			return null;
