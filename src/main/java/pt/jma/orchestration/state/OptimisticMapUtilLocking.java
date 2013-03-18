@@ -25,7 +25,7 @@ public class OptimisticMapUtilLocking extends AbstractMapUtilLocking {
 				synchronized (this.lock) {
 					if (previousVersion == this.version) {
 						this.version++;
-						this.value.put(fn.getKey(), fn.call());
+						this.value.put(fn.getKey(), swapValue);
 						return ((T) this.value.get(fn.getKey()));
 					}
 				}
