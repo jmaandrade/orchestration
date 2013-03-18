@@ -2,7 +2,7 @@ package pt.jma.orchestration.state;
 
 import pt.jma.common.IMapUtil;
 
-public abstract class AbstractMapUtilEntryFn<T> implements IFn<T> {
+public abstract class AbstractMapUtilEntryFn<T> implements IMapUtilEntryFn<T> {
 
 	public IMapUtil getMap() {
 		return map;

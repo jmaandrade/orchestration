@@ -11,7 +11,7 @@ public class PessimisticMapUtilLocking extends AbstractMapUtilLocking {
 	}
 
 	@Override
-	public <T extends Serializable> T swapEntry(AbstractMapUtilEntryFn<T> fn) throws Throwable {
+	public <T extends Serializable> T swapEntry(IMapUtilEntryFn<T> fn) throws Throwable {
 
 		try {
 			synchronized (this.lock) {
