@@ -7,8 +7,8 @@ import java.util.Comparator;
 
 import org.junit.Test;
 
-import pt.jma.orchestration.state.IAtomic;
-import pt.jma.orchestration.state.PessimisticLocking;
+import pt.jma.common.atomic.IAtomic;
+import pt.jma.common.atomic.PessimisticLocking;
 
 public class TestPessimisticLocking {
 

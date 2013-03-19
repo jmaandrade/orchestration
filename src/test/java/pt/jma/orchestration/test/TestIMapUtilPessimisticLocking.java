@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import pt.jma.common.IMapUtil;
 import pt.jma.common.MapUtil;
-import pt.jma.orchestration.state.IAtomicMapUtil;
-import pt.jma.orchestration.state.PessimisticMapUtilLocking;
+import pt.jma.common.atomic.IAtomicMapUtil;
+import pt.jma.common.atomic.PessimisticMapUtilLocking;
 
 public class TestIMapUtilPessimisticLocking {
 

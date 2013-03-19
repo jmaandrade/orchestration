@@ -8,6 +8,8 @@ import java.util.UUID;
 import pt.jma.common.IMapUtil;
 import pt.jma.common.MapUtil;
 import pt.jma.common.ReflectionUtil;
+import pt.jma.common.atomic.IAtomicMapUtil;
+import pt.jma.common.atomic.PessimisticMapUtilLocking;
 import pt.jma.common.collection.CollectionUtil;
 import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.activity.config.BindType;
@@ -45,7 +47,7 @@ public class ActivityImpl implements IActivity {
 		return converters.get(bindType.getConverter());
 	}
 
-	public Map<String, IMapUtil> getScope() {
+	public Map<String, IAtomicMapUtil> getScope() {
 		return scope;
 	}
 
@@ -67,7 +69,7 @@ public class ActivityImpl implements IActivity {
 
 	}
 
-	Map<String, IMapUtil> scope = new HashMap<String, IMapUtil>();
+	Map<String, IAtomicMapUtil> scope = new HashMap<String, IAtomicMapUtil>();
 	IMapUtil state = new MapUtil();
 
 	static Map<String, String> inputScopesFrom = new HashMap<String, String>();
@@ -105,12 +107,12 @@ public class ActivityImpl implements IActivity {
 	public synchronized IResponse invoke(IRequest request) throws Throwable {
 
 		if (!scope.containsKey("state"))
-			scope.put("state", state);
+			scope.put("state", new PessimisticMapUtilLocking(state));
 
-		scope.put("global-state", this.getSettings().getActivityContext().getState());
+		scope.put("global-state", new PessimisticMapUtilLocking(this.getSettings().getActivityContext().getState()));
 
-		scope.put("input-message", request);
-		scope.put("input-message-context", request.getContext());
+		scope.put("input-message", new PessimisticMapUtilLocking(request));
+		scope.put("input-message-context", new PessimisticMapUtilLocking(request.getContext()));
 
 		request.getContext().put("activity", this.settings.getName());
 
@@ -118,11 +120,11 @@ public class ActivityImpl implements IActivity {
 		this.uUID = request.getUUID();
 		response.setUUID(this.getUUID());
 
-		scope.put("output-message", response);
-		scope.put("output-message-context", response.getContext());
+		scope.put("output-message", new PessimisticMapUtilLocking(response));
+		scope.put("output-message-context", new PessimisticMapUtilLocking(response.getContext()));
 
 		if (!scope.containsKey("properties"))
-			scope.put("properties", this.settings.getProperties());
+			scope.put("properties", new PessimisticMapUtilLocking(this.settings.getProperties()));
 
 		CollectionUtil.map(this.getSettings().getInputBinds(), new BindProcessor(this, inputScopesFrom, inputScopesTo));
 
@@ -182,8 +184,8 @@ public class ActivityImpl implements IActivity {
 
 				IRequest serviceRequest = new Request();
 
-				scope.put("input-action-message", serviceRequest);
-				scope.put("input-action-message-context", serviceRequest.getContext());
+				scope.put("input-action-message", new PessimisticMapUtilLocking(serviceRequest));
+				scope.put("input-action-message-context", new PessimisticMapUtilLocking(serviceRequest.getContext()));
 
 				CollectionUtil.map(actionType.getBinds().getInputBind(), new BindProcessor(this, inputScopesFrom, inputScopesTo));
 
@@ -191,8 +193,8 @@ public class ActivityImpl implements IActivity {
 
 				response.setOutcome(responseService.getOutcome());
 
-				scope.put("output-action-message", responseService);
-				scope.put("output-action-message-context", responseService.getContext());
+				scope.put("output-action-message", new PessimisticMapUtilLocking(responseService));
+				scope.put("output-action-message-context", new PessimisticMapUtilLocking(responseService.getContext()));
 
 				CollectionUtil.map(actionType.getBinds().getOutputBind(), new BindProcessor(this, outputScopesFrom, outputScopesTo));
 

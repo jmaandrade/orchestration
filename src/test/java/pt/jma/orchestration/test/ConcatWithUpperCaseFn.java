@@ -1,16 +1,26 @@
 package pt.jma.orchestration.test;
 
 import pt.jma.common.IMapUtil;
-import pt.jma.orchestration.state.AbstractMapUtilEntryFn;
+import pt.jma.common.atomic.AbstractMapUtilEntryFn;
 
 public class ConcatWithUpperCaseFn extends AbstractMapUtilEntryFn<String> {
 
 	String value;
+	IMapUtil map;
 
 	public ConcatWithUpperCaseFn(IMapUtil map, String key, String value) throws Throwable {
-		super(map, key);
+		super(key);
+		this.map = map;
 		this.value = value;
 
+	}
+
+	public IMapUtil getMap() {
+		return map;
+	}
+
+	public void setMap(IMapUtil map) {
+		this.map = map;
 	}
 
 	@Override

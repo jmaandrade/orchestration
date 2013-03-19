@@ -1,7 +1,7 @@
 package pt.jma.orchestration.test;
 
-import pt.jma.orchestration.state.AbstractMapUtilEntryFn;
-import pt.jma.orchestration.state.IAtomicMapUtil;
+import pt.jma.common.atomic.AbstractMapUtilEntryFn;
+import pt.jma.common.atomic.IAtomicMapUtil;
 
 public class Worker2 extends Thread {
 

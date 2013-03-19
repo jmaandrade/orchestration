@@ -1,6 +1,6 @@
 package pt.jma.orchestration.test;
 
-import pt.jma.orchestration.state.IFn;
+import pt.jma.common.atomic.IFn;
 
 public class DummyFn implements IFn<Integer> {
 

@@ -6,6 +6,7 @@ import java.util.Map;
 import pt.jma.common.IMapUtil;
 import pt.jma.common.collection.IMapProcessor;
 import pt.jma.orchestration.activity.config.BindType;
+import pt.jma.orchestration.context.IConverter;
 import pt.jma.orchestration.exception.InvalidScopeException;
 
 public class BindProcessor implements IMapProcessor<BindType> {
@@ -44,20 +45,19 @@ public class BindProcessor implements IMapProcessor<BindType> {
 		return true;
 	}
 
-	private void bindScope(BindType bindType, String scopeFrom, String scopeTo) throws Exception {
+	private void bindScope(BindType bindType, String scopeFrom, String scopeTo) throws Throwable {
 
-		IMapUtil mapFrom = this.activity.getScope().get(scopeFrom);
-		IMapUtil mapTo = this.activity.getScope().get(scopeTo);
+		IMapUtil mapFrom = this.activity.getScope().get(scopeFrom).getValue();
 
 		if (mapFrom.containsKey(bindType.getFrom())) {
 
 			Serializable value = (Serializable) mapFrom.get(bindType.getFrom());
 
-			if (bindType.getConverter() != null) {
-				value = (Serializable) ActivityImpl.getConverter(this.activity.getSettings(), bindType).convert(Object.class, value);
-			}
+			IConverter converter = (bindType.getConverter() != null ? ActivityImpl.getConverter(this.activity.getSettings(), bindType)
+					: null);
 
-			mapTo.put(bindType.getTo(), value);
+			this.activity.getScope().get(scopeTo).swapEntry(new BindFn(bindType.getTo(), value, converter));
+
 		}
 
 	}

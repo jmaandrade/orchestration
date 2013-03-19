@@ -1,7 +1,7 @@
 package pt.jma.orchestration.test;
 
-import pt.jma.orchestration.state.IAtomic;
-import pt.jma.orchestration.state.IFn;
+import pt.jma.common.atomic.IAtomic;
+import pt.jma.common.atomic.IFn;
 
 public class Worker extends Thread {
 

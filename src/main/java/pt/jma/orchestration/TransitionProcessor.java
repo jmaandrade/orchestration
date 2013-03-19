@@ -1,9 +1,9 @@
 package pt.jma.orchestration;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import pt.jma.common.IMapUtil;
 import pt.jma.common.collection.CollectionUtil;
 import pt.jma.common.collection.IMapProcessor;
 import pt.jma.orchestration.activity.config.StateType;
@@ -33,28 +33,21 @@ public class TransitionProcessor implements IMapProcessor<TransitionType> {
 
 	}
 
+	static Comparator<String> stateComparator = new Comparator<String>() {
+		public int compare(String arg0, String arg1) {
+			return (arg0 == null || arg0.equals(arg1) ? 0 : -1);
+		}
+	};
+
 	@Override
 	public boolean execute(TransitionType instance) throws Throwable {
 
-		IMapUtil state = this.activity.getScope().get("state");
-
-		synchronized (state) {
-
-			if (!state.containsKey(this.stateType.getName())) {
-				state.put(this.stateType.getName(), "");
-			}
-
-			if ((instance.getCurrent() != null && state.get(this.stateType.getName()).equals(instance.getCurrent()))
-					|| (instance.getCurrent() == null)) {
-				state.put(this.stateType.getName(), instance.getNext());
-
-				CollectionUtil.map(instance.getBinds(),
-						new BindProcessor(this.activity, stateTransitionScopesFrom, stateTransitionScopesTo));
-
-				return false;
-			}
-
+		if (this.activity.getScope().get("state")
+				.compareAndSet(this.stateType.getName(), stateComparator, instance.getCurrent(), instance.getNext())) {
+			CollectionUtil.map(instance.getBinds(), new BindProcessor(this.activity, stateTransitionScopesFrom, stateTransitionScopesTo));
+			return false;
 		}
+
 		return true;
 	}
 

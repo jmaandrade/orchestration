@@ -9,8 +9,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import pt.jma.orchestration.state.IAtomic;
-import pt.jma.orchestration.state.OptimisticLocking;
+import pt.jma.common.atomic.IAtomic;
+import pt.jma.common.atomic.OptimisticLocking;
 
 public class TestOptimisticLocking {
 
