@@ -15,7 +15,6 @@ public class PutResultProcessor implements IMapProcessor<ResultType> {
 		this.results = results;
 	}
 
-	@Override
 	public boolean execute(ResultType instance) throws Throwable {
 
 		if (!results.containsKey(instance.getType())) {

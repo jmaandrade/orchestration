@@ -86,7 +86,6 @@ public class ActivitySettings implements IActivitySettings {
 		return properties;
 	}
 
-	@Override
 	public String getStartActivityEvent() {
 		return startActivityEvent;
 	}

@@ -23,7 +23,6 @@ public class BindProcessor implements IMapProcessor<BindType> {
 
 	Map<String, String> scopesToMap;
 
-	@Override
 	public boolean execute(BindType bindType) throws Throwable {
 		String scopeFromKey = "";
 

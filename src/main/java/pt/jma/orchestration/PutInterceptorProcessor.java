@@ -14,7 +14,6 @@ public class PutInterceptorProcessor implements IMapProcessor<InterceptorConfigT
 		this.interceptors = interceptors;
 	}
 
-	@Override
 	public boolean execute(InterceptorConfigType instance) throws Throwable {
 
 		interceptors.put(instance.getName(), instance);

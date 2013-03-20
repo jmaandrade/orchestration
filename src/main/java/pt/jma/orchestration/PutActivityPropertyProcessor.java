@@ -9,7 +9,6 @@ public class PutActivityPropertyProcessor extends AbstractActivityProcessor impl
 
 	}
 
-	@Override
 	public boolean execute(PropertyType propertyType) throws Throwable {
 		activitySettings.getProperties().put(propertyType.getName(), propertyType.getValue());
 		return true;

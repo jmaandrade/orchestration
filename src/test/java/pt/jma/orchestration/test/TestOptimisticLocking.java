@@ -34,7 +34,6 @@ public class TestOptimisticLocking {
 
 			count.compareAndSet(new Comparator<Integer>() {
 
-				@Override
 				public int compare(Integer o1, Integer o2) {
 					if (o1.intValue() == o2.intValue())
 						return 0;

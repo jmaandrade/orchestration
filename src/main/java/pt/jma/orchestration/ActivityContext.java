@@ -155,7 +155,6 @@ public class ActivityContext implements IActivityContext {
 
 	}
 
-	@Override
 	public synchronized IActivity lookup(String name) throws Exception {
 		try {
 			IActivity instance = (IActivity) new ActivityImpl(this.getActivitySettings(name));
@@ -167,29 +166,24 @@ public class ActivityContext implements IActivityContext {
 		}
 	}
 
-	@Override
 	public Map<String, AdapterConfigType> getAdapters() throws Exception {
 		return this.adapters;
 	}
 
-	@Override
 	public Map<String, ConverterType> getConverters() throws Exception {
 		return this.converters;
 	}
 
-	@Override
 	public Map<String, InterceptorConfigType> getInterceptors() throws Exception {
 		return this.interceptors;
 	}
 
-	@Override
 	public Map<String, ServiceType> getServices() throws Exception {
 		return this.services;
 	}
 
 	IMapUtil state = new MapUtil();
 
-	@Override
 	public IMapUtil getState() {
 
 		return state;

@@ -23,7 +23,6 @@ public abstract class AbstractServiceInvocationImpl implements IServiceInvocatio
 
 	Object targetInstance = null;
 
-	@Override
 	public Object getTargetInstance() throws Exception {
 		if (targetInstance == null) {
 			targetInstance = ReflectionUtil.getInstance(actionType.getTarget().getClazz());

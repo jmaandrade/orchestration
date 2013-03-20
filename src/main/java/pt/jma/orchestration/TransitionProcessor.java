@@ -39,7 +39,6 @@ public class TransitionProcessor implements IMapProcessor<TransitionType> {
 		}
 	};
 
-	@Override
 	public boolean execute(TransitionType instance) throws Throwable {
 
 		if (this.activity.getScope().get("state")

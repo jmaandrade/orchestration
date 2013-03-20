@@ -10,7 +10,6 @@ public class AddActivityInterceptorProcessor extends AbstractContextProcessor im
 
 	}
 
-	@Override
 	public boolean execute(InterceptorType instance) throws Throwable {
 
 		activityContext.getActivityInterceptors().add(instance);

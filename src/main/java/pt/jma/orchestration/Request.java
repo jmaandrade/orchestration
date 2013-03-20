@@ -14,24 +14,20 @@ public class Request extends MapUtil implements IRequest {
 		return this.context;
 	}
 
-	@Override
 	public String getStartAction() throws Exception {
 		return (String) this.getContext().get("start-action");
 	}
 
-	@Override
 	public void setStartAction(String startAction) throws Exception {
 		this.getContext().put("start-action", startAction);
 
 	}
 
-	@Override
 	public void setUUID(UUID uuid) throws Exception {
 		this.getContext().put("uuid", uuid);
 
 	}
 
-	@Override
 	public UUID getUUID() throws Exception {
 
 		return (UUID) this.getContext().get("uuid");

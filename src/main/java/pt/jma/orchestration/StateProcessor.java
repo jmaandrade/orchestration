@@ -13,7 +13,6 @@ public class StateProcessor implements IMapProcessor<StateType> {
 		this.activity = activity;
 	}
 
-	@Override
 	public boolean execute(StateType instance) throws Throwable {
 
 		CollectionUtil.map(instance.getTransitions(), new TransitionProcessor(this.activity, instance));

@@ -12,7 +12,6 @@ public class PutEventProcessor implements IMapProcessor<EventType> {
 		this.activitySettings = activitySettings;
 	}
 
-	@Override
 	public boolean execute(EventType eventType) throws Throwable {
 		activitySettings.getEventsMap().put(eventType.getName(), eventType);
 		return true;

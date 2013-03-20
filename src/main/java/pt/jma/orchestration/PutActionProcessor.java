@@ -12,7 +12,6 @@ public class PutActionProcessor implements IMapProcessor<ActionType> {
 		this.activitySettings = activitySettings;
 	}
 
-	@Override
 	public boolean execute(ActionType instance) throws Throwable {
 
 		activitySettings.getActionMap().put(instance.getName(), instance);

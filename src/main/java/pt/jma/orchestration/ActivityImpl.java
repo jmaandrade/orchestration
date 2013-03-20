@@ -103,7 +103,6 @@ public class ActivityImpl implements IActivity {
 
 	}
 
-	@Override
 	public synchronized IResponse invoke(IRequest request) throws Throwable {
 
 		if (!scope.containsKey("state"))
@@ -293,11 +292,9 @@ public class ActivityImpl implements IActivity {
 		return uUID;
 	}
 
-	@Override
 	public ThreadActivity invokeAsynchr(IRequest request) throws Throwable {
 
 		ThreadActivity instance = new ThreadActivity(this, request, new IThreadActivityCaller() {
-			@Override
 			public boolean notifyThreadEnd() {
 				return true;
 			}

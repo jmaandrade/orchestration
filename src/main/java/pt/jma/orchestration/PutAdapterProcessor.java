@@ -9,7 +9,6 @@ public class PutAdapterProcessor extends AbstractContextProcessor implements IMa
 		super(activityContext);
 	}
 
-	@Override
 	public boolean execute(AdapterConfigType instance) throws Throwable {
 
 		activityContext.getAdapters().put(instance.getName(), instance);

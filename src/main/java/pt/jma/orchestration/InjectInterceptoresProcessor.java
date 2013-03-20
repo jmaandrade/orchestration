@@ -16,7 +16,6 @@ public class InjectInterceptoresProcessor implements IReduceProcessor<Intercepto
 		this.activityContext = activityContext;
 	}
 
-	@Override
 	public IActivity execute(InterceptorType interceptor, IActivity result) throws Throwable {
 
 		String interceptorClassName = activityContext.getInterceptors().get(interceptor.getName()).getClazz();

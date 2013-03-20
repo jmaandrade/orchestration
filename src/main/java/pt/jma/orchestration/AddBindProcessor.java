@@ -14,7 +14,6 @@ public class AddBindProcessor implements IMapProcessor<BindType> {
 		this.binds = binds;
 	}
 
-	@Override
 	public boolean execute(BindType bindType) throws Throwable {
 		this.binds.add(bindType);
 		return true;
