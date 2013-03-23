@@ -21,7 +21,7 @@ public class BindRequestToClojureProcessor implements IMapProcessor<BindType> {
 
 	public boolean execute(BindType instance) throws Throwable {
 		if (instance.getScopeTo() == null)
-			map.put(RT.var("clojure.core", "keyword").invoke(instance.getFrom()), this.request.get(instance.getTo()));
+			map.put(RT.var("clojure.core", "keyword").invoke(instance.getTo()), this.request.get(instance.getTo()));
 		return true;
 	}
 
