@@ -20,7 +20,9 @@ public class BindClojureToResponseProcessor implements IMapProcessor<BindType> {
 	}
 
 	public boolean execute(BindType instance) throws Throwable {
-		response.put(instance.getFrom(), (Serializable) result.valAt(RT.var("clojure.core", "keyword").invoke(instance.getFrom())));
+		if (instance.getScopeFrom() == null)
+			response.put(instance.getFrom(), (Serializable) result.valAt(RT.var("clojure.core", "keyword").invoke(instance.getTo())));
+
 		return true;
 	}
 
