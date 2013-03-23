@@ -1,8 +1,9 @@
-package pt.jma.orchestration;
+package pt.jma.orchestration.adapter;
 
 import java.lang.reflect.Method;
 
 import pt.jma.common.ReflectionUtil;
+import pt.jma.orchestration.IServiceInvocation;
 import pt.jma.orchestration.activity.config.ActionType;
 
 public abstract class AbstractServiceInvocationImpl implements IServiceInvocation {

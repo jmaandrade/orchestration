@@ -10,6 +10,8 @@ public interface IServiceInvocation {
 
 	ActionType getActionType();
 
+	void setActionType(ActionType actionType);
+
 	Method getMethod() throws Exception;
 
 	Object getTargetInstance() throws Exception;

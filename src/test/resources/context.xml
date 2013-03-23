@@ -7,6 +7,7 @@
 	<c:convertersConfig/>
 	<c:adaptersConfig>
 		<c:adapterConfig name="CustomActionAdapter" class="pt.jma.orchestration.adapter.CustomActionAdapter" />
+		<c:adapterConfig name="CustomClojureActionAdapter" class="pt.jma.orchestration.adapter.CustomClojureActionAdapter" />
 	</c:adaptersConfig>
 	<c:activityInterceptoresConfig/>
 	<c:interceptoresConfig>
@@ -17,6 +18,9 @@
 			<c:interceptores>
 				<c:interceptor name="BeanBindInterceptor" />
 			</c:interceptores>
+		</c:service>
+		<c:service name="clojure" adapter="CustomClojureActionAdapter">
+			<c:interceptores/>
 		</c:service>
 	</c:services>
 	<c:results/>

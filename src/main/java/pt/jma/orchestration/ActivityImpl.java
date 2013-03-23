@@ -1,6 +1,5 @@
 package pt.jma.orchestration;
 
-import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -14,17 +13,13 @@ import pt.jma.common.collection.CollectionUtil;
 import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.activity.config.BindType;
 import pt.jma.orchestration.activity.config.ForwardType;
-import pt.jma.orchestration.adapter.interceptor.AbstractServiceInterceptor;
 import pt.jma.orchestration.context.IConverter;
-import pt.jma.orchestration.context.config.InterceptorConfigType;
-import pt.jma.orchestration.context.config.InterceptorType;
 import pt.jma.orchestration.context.config.ServiceType;
 import pt.jma.orchestration.exception.ActionNotFoundException;
 import pt.jma.orchestration.exception.EventNotFoundException;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.exception.OutcomeNotFoundException;
 import pt.jma.orchestration.result.config.ResultType;
-import pt.jma.orchestration.util.PropertiesUtil;
 import pt.jma.orchestration.util.thread.IThreadActivityCaller;
 import pt.jma.orchestration.util.thread.ThreadActivity;
 
@@ -150,36 +145,13 @@ public class ActivityImpl implements IActivity {
 
 				ServiceType serviceType = this.settings.getActivityContext().getServices().get(actionType.getService());
 
-				InterceptorType[] interceptorsService = serviceType.getInterceptors().toArray(
-						new InterceptorType[serviceType.getInterceptors().size()]);
-
 				String adapterClassName = this.settings.getActivityContext().getAdapters().get(serviceType.getAdapter()).getClazz();
 
-				AbstractServiceInvocationImpl abstractServiceInvocationImpl = ReflectionUtil.getInstance(adapterClassName);
-				abstractServiceInvocationImpl.setActionType(actionType);
+				IServiceInvocation serviceInvocationInstance = (IServiceInvocation) ReflectionUtil.getInstance(adapterClassName);
+				serviceInvocationInstance.setActionType(actionType);
 
-				IServiceInvocation serviceInvocationInstance = (IServiceInvocation) abstractServiceInvocationImpl;
-
-				for (InterceptorType interceptorService : interceptorsService) {
-
-					String interceptorClassName = this.settings.getActivityContext().getInterceptors().get(interceptorService.getName())
-							.getClazz();
-
-					AbstractServiceInterceptor handler = ReflectionUtil.getInstance(interceptorClassName);
-
-					InterceptorConfigType interceptorConfigType = this.settings.getActivityContext().getInterceptors()
-							.get(interceptorService.getName());
-
-					handler.getPropertiesMap().putAll(PropertiesUtil.getPropertiesMap(interceptorConfigType.getProperties()));
-					handler.getPropertiesMap().putAll(PropertiesUtil.getPropertiesMap(interceptorService.getProperties()));
-
-					handler.setServiceInvocation(serviceInvocationInstance);
-
-					serviceInvocationInstance = (IServiceInvocation) Proxy.newProxyInstance(
-							((IServiceInvocation) serviceInvocationInstance).getClass().getClassLoader(),
-							new Class[] { IServiceInvocation.class }, handler);
-
-				}
+				serviceInvocationInstance = CollectionUtil.reduce(serviceType.getInterceptors(), new InterceptorProcessor(this),
+						serviceInvocationInstance);
 
 				IRequest serviceRequest = new Request();
 

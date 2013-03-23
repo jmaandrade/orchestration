@@ -1,6 +1,5 @@
 package pt.jma.orchestration.adapter;
 
-import pt.jma.orchestration.AbstractServiceInvocationImpl;
 import pt.jma.orchestration.IRequest;
 import pt.jma.orchestration.IResponse;
 import pt.jma.orchestration.IServiceInvocation;
