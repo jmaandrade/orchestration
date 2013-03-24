@@ -98,7 +98,7 @@ public class ActivityImpl implements IActivity {
 
 	}
 
-	public synchronized IResponse invoke(IRequest request) throws Throwable {
+	public IResponse invoke(IRequest request) throws Throwable {
 
 		if (!scope.containsKey("state"))
 			scope.put("state", new PessimisticMapUtilLocking(state));
