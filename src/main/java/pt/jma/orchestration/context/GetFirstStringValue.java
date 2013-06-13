@@ -2,9 +2,9 @@ package pt.jma.orchestration.context;
 
 import java.io.Serializable;
 
-public class GetFirstStringValue implements IConverter {
+public class GetFirstStringValue implements IConverter<String> {
 
-	public Serializable convert(Class arg0, Serializable arg1) {
+	public String convert(Serializable arg1) throws Exception {
 		String[] values = (String[]) arg1;
 
 		return values.length > 0 ? values[0] : null;

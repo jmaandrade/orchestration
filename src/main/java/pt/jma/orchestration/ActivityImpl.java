@@ -10,10 +10,15 @@ import pt.jma.common.ReflectionUtil;
 import pt.jma.common.atomic.IAtomicMapUtil;
 import pt.jma.common.atomic.PessimisticMapUtilLocking;
 import pt.jma.common.collection.CollectionUtil;
+import pt.jma.common.collection.IMapProcessor;
+import pt.jma.common.collection.IReduceProcessor;
 import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.activity.config.BindType;
+import pt.jma.orchestration.activity.config.EventType;
 import pt.jma.orchestration.activity.config.ForwardType;
+import pt.jma.orchestration.activity.config.StateType;
 import pt.jma.orchestration.context.IConverter;
+import pt.jma.orchestration.context.config.InterceptorType;
 import pt.jma.orchestration.context.config.ServiceType;
 import pt.jma.orchestration.exception.ActionNotFoundException;
 import pt.jma.orchestration.exception.EventNotFoundException;
@@ -98,6 +103,52 @@ public class ActivityImpl implements IActivity {
 
 	}
 
+	private IMapProcessor<BindType> inputBindProcessor = null;
+	private IMapProcessor<BindType> outputBindProcessor = null;
+
+	synchronized public IMapProcessor<BindType> getInputBindProcessor() {
+		if (this.inputBindProcessor == null)
+			this.inputBindProcessor = new BindProcessor(this, inputScopesFrom, inputScopesTo);
+		return inputBindProcessor;
+	}
+
+	synchronized public IMapProcessor<BindType> getOutputBindProcessor() {
+		if (this.outputBindProcessor == null)
+			this.outputBindProcessor = new BindProcessor(this, outputScopesFrom, outputScopesTo);
+		return outputBindProcessor;
+	}
+
+	private IReduceProcessor<InterceptorType, IServiceInvocation> interceptorProcessor = null;
+
+	synchronized public IReduceProcessor<InterceptorType, IServiceInvocation> getInterceptorProcessor() {
+
+		if (this.interceptorProcessor == null)
+			this.interceptorProcessor = new InterceptorProcessor(this);
+
+		return interceptorProcessor;
+	}
+
+	Map<String, IServiceInvocation> serviceInvocationCache = new HashMap<String, IServiceInvocation>();
+
+	public IServiceInvocation getServiceInvocation(ServiceType serviceType, ActionType actionType, String adapterClassName)
+			throws Throwable {
+
+		String name = actionType.getName();
+
+		synchronized (serviceInvocationCache) {
+			if (!serviceInvocationCache.containsKey(name)) {
+				IServiceInvocation serviceInvocationInstance = (IServiceInvocation) ReflectionUtil.getInstance(adapterClassName);
+				serviceInvocationInstance.setActionType(actionType);
+
+				serviceInvocationCache.put(name,
+						CollectionUtil.reduce(serviceType.getInterceptors(), this.getInterceptorProcessor(), serviceInvocationInstance));
+
+			}
+			return serviceInvocationCache.get(name);
+		}
+
+	}
+
 	public IResponse invoke(IRequest request) throws Throwable {
 
 		if (!scope.containsKey("state"))
@@ -120,7 +171,7 @@ public class ActivityImpl implements IActivity {
 		if (!scope.containsKey("properties"))
 			scope.put("properties", new PessimisticMapUtilLocking(this.settings.getProperties()));
 
-		CollectionUtil.map(this.getSettings().getInputBinds(), new BindProcessor(this, inputScopesFrom, inputScopesTo));
+		CollectionUtil.map(this.getSettings().getInputBinds(), this.getInputBindProcessor());
 
 		if (this.settings.getStartActivityEvent() != null)
 			this.triggerEvent(this.settings.getStartActivityEvent());
@@ -147,18 +198,24 @@ public class ActivityImpl implements IActivity {
 
 				String adapterClassName = this.settings.getActivityContext().getAdapters().get(serviceType.getAdapter()).getClazz();
 
-				IServiceInvocation serviceInvocationInstance = (IServiceInvocation) ReflectionUtil.getInstance(adapterClassName);
-				serviceInvocationInstance.setActionType(actionType);
+				IServiceInvocation serviceInvocationInstance = this.getServiceInvocation(serviceType, actionType, adapterClassName);
 
-				serviceInvocationInstance = CollectionUtil.reduce(serviceType.getInterceptors(), new InterceptorProcessor(this),
-						serviceInvocationInstance);
+				// IServiceInvocation serviceInvocationInstance =
+				// (IServiceInvocation)
+				// ReflectionUtil.getInstance(adapterClassName);
+				// serviceInvocationInstance.setActionType(actionType);
+				//
+				// serviceInvocationInstance =
+				// CollectionUtil.reduce(serviceType.getInterceptors(),
+				// this.getInterceptorProcessor(),
+				// serviceInvocationInstance);
 
 				IRequest serviceRequest = new Request();
 
 				scope.put("input-action-message", new PessimisticMapUtilLocking(serviceRequest));
 				scope.put("input-action-message-context", new PessimisticMapUtilLocking(serviceRequest.getContext()));
 
-				CollectionUtil.map(actionType.getBinds().getInputBind(), new BindProcessor(this, inputScopesFrom, inputScopesTo));
+				CollectionUtil.map(actionType.getBinds().getInputBind(), this.getInputBindProcessor());
 
 				IResponse responseService = serviceInvocationInstance.invoke(serviceRequest);
 
@@ -167,7 +224,7 @@ public class ActivityImpl implements IActivity {
 				scope.put("output-action-message", new PessimisticMapUtilLocking(responseService));
 				scope.put("output-action-message-context", new PessimisticMapUtilLocking(responseService.getContext()));
 
-				CollectionUtil.map(actionType.getBinds().getOutputBind(), new BindProcessor(this, outputScopesFrom, outputScopesTo));
+				CollectionUtil.map(actionType.getBinds().getOutputBind(), this.getOutputBindProcessor());
 
 				nextAction = "";
 				ForwardType forwardType = null;
@@ -199,7 +256,10 @@ public class ActivityImpl implements IActivity {
 
 							ResultType result = this.settings.getResultsMap().get("outcome").get(responseService.getOutcome());
 
+							CollectionUtil.map(result.getBinds(), this.getOutputBindProcessor());
+
 							if (result.getTargetType() != null && result.getTargetType().equalsIgnoreCase("action")) {
+
 								nextAction = result.getTargetName();
 							}
 
@@ -225,6 +285,9 @@ public class ActivityImpl implements IActivity {
 							new ExceptionResultDetectionProcessor(this, ex));
 
 					if (result != null) {
+
+						CollectionUtil.map(result.getBinds(), this.getOutputBindProcessor());
+
 						nextAction = (result.getTargetName() != null ? result.getTargetName() : "");
 						this.triggerEvent(result.getEvent());
 					}
@@ -239,10 +302,20 @@ public class ActivityImpl implements IActivity {
 			}
 		}
 
-		CollectionUtil.map(this.getSettings().getOutputBinds(), new BindProcessor(this, outputScopesFrom, outputScopesTo));
+		CollectionUtil.map(this.getSettings().getOutputBinds(), this.getOutputBindProcessor());
 
 		return response;
 
+	}
+
+	public IMapProcessor<StateType> stateProcessor = null;
+
+	synchronized public IMapProcessor<StateType> getStateProcessor() {
+
+		if (stateProcessor == null)
+			this.stateProcessor = new StateProcessor(this);
+
+		return stateProcessor;
 	}
 
 	private void triggerEvent(String name) throws Throwable {
@@ -252,7 +325,11 @@ public class ActivityImpl implements IActivity {
 			if (!this.settings.getEventsMap().containsKey(name))
 				throw new EventNotFoundException(name);
 
-			CollectionUtil.map(this.settings.getEventsMap().get(name).getStates(), new StateProcessor(this));
+			EventType event = this.settings.getEventsMap().get(name);
+
+			CollectionUtil.map(event.getStates(), this.getStateProcessor());
+			CollectionUtil.map(event.getBinds(),
+					(scope.containsKey("output-action-message") ? this.getOutputBindProcessor() : this.getInputBindProcessor()));
 		}
 
 	}

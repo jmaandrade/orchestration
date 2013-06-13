@@ -18,8 +18,15 @@ public abstract class AbstractServiceInvocationImpl implements IServiceInvocatio
 		return this.actionType.getTarget().getClazz();
 	}
 
+	private Method method = null;
+
 	public Method getMethod() throws Exception {
-		return this.getTargetInstance().getClass().getMethod(this.getActionType().getTarget().getMethod(), new Class[] {});
+
+		if (method == null)
+			method = this.getTargetInstance().getClass().getMethod(this.getActionType().getTarget().getMethod(), new Class[] {});
+
+		return method;
+
 	}
 
 	Object targetInstance = null;

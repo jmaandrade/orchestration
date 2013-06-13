@@ -32,4 +32,14 @@ public class EventType {
 		return this.states;
 	}
 
+	@XmlElement(name = "bind", type = BindType.class, required = false, namespace = "urn:pt.jma.orchestration.activity")
+	protected List<BindType> binds;
+
+	public List<BindType> getBinds() {
+		if (binds == null) {
+			binds = new ArrayList<BindType>();
+		}
+		return this.binds;
+	}
+
 }

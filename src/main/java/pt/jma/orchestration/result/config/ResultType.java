@@ -7,9 +7,15 @@
 
 package pt.jma.orchestration.result.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+
+import pt.jma.orchestration.activity.config.BindType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResultType {
@@ -68,5 +74,15 @@ public class ResultType {
 
 	@XmlAttribute(required = false)
 	protected String event;
+
+	@XmlElement(name = "bind", type = BindType.class, required = false, namespace = "urn:pt.jma.orchestration.activity")
+	protected List<BindType> binds;
+
+	public List<BindType> getBinds() {
+		if (binds == null) {
+			binds = new ArrayList<BindType>();
+		}
+		return this.binds;
+	}
 
 }

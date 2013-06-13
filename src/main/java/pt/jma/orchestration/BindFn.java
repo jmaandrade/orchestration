@@ -8,7 +8,7 @@ import pt.jma.orchestration.context.IConverter;
 public class BindFn extends AbstractMapUtilEntryFn<Serializable> {
 
 	Serializable value;
-	IConverter converter;
+	IConverter<Serializable> converter;
 	IActivitySettings settings;
 
 	public BindFn(String key, Serializable value, IConverter converter) throws Throwable {
@@ -24,7 +24,7 @@ public class BindFn extends AbstractMapUtilEntryFn<Serializable> {
 		if (value != null) {
 
 			if (converter != null) {
-				value = (Serializable) converter.convert(Object.class, value);
+				value = converter.convert(value);
 			}
 		}
 
