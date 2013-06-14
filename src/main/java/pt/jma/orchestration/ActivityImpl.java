@@ -16,7 +16,6 @@ import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.activity.config.BindType;
 import pt.jma.orchestration.activity.config.EventType;
 import pt.jma.orchestration.activity.config.ForwardType;
-import pt.jma.orchestration.activity.config.StateType;
 import pt.jma.orchestration.context.IConverter;
 import pt.jma.orchestration.context.config.InterceptorType;
 import pt.jma.orchestration.context.config.ServiceType;
@@ -173,12 +172,18 @@ public class ActivityImpl implements IActivity {
 
 		CollectionUtil.map(this.getSettings().getInputBinds(), this.getInputBindProcessor());
 
+		if (state.containsKey("start")) {
+			state.put("start", "False");
+			this.triggerAutomaticEvent("on-activity-restart");
+		} else {
+			state.put("start", "True");
+			this.triggerAutomaticEvent("on-activity-start");
+		}
+
 		if (this.settings.getStartActivityEvent() != null)
-			this.triggerEvent(this.settings.getStartActivityEvent());
+			this.triggerUserEvent(this.settings.getStartActivityEvent());
 
 		String nextAction = request.getStartAction().isEmpty() ? this.settings.getStart() : request.getStartAction();
-
-		response.getContext().put("activity", this.settings.getName());
 
 		while (true) {
 
@@ -192,7 +197,7 @@ public class ActivityImpl implements IActivity {
 				response.getContext().put("last-action", actionType.getName());
 
 				if (actionType.getEvent() != null)
-					this.triggerEvent(actionType.getEvent());
+					this.triggerUserEvent(actionType.getEvent());
 
 				ServiceType serviceType = this.settings.getActivityContext().getServices().get(actionType.getService());
 
@@ -200,23 +205,13 @@ public class ActivityImpl implements IActivity {
 
 				IServiceInvocation serviceInvocationInstance = this.getServiceInvocation(serviceType, actionType, adapterClassName);
 
-				// IServiceInvocation serviceInvocationInstance =
-				// (IServiceInvocation)
-				// ReflectionUtil.getInstance(adapterClassName);
-				// serviceInvocationInstance.setActionType(actionType);
-				//
-				// serviceInvocationInstance =
-				// CollectionUtil.reduce(serviceType.getInterceptors(),
-				// this.getInterceptorProcessor(),
-				// serviceInvocationInstance);
-
 				IRequest serviceRequest = new Request();
 
 				scope.put("input-action-message", new PessimisticMapUtilLocking(serviceRequest));
 				scope.put("input-action-message-context", new PessimisticMapUtilLocking(serviceRequest.getContext()));
 
 				CollectionUtil.map(actionType.getBinds().getInputBind(), this.getInputBindProcessor());
-
+				this.triggerAutomaticEvent("on-action-invoke");
 				IResponse responseService = serviceInvocationInstance.invoke(serviceRequest);
 
 				response.setOutcome(responseService.getOutcome());
@@ -247,9 +242,10 @@ public class ActivityImpl implements IActivity {
 					forwardType = actionType.getForwardMap().get(responseService.getOutcome());
 				}
 
-				if (forwardType != null)
+				if (forwardType != null) {
 					nextAction = forwardType.getAction();
-
+					this.triggerAutomaticEvent("on-forward");
+				}
 				if (nextAction.isEmpty()) {
 					if (this.settings.getResultsMap().containsKey("outcome")) {
 						if (this.settings.getResultsMap().get("outcome").containsKey(responseService.getOutcome())) {
@@ -261,15 +257,17 @@ public class ActivityImpl implements IActivity {
 							if (result.getTargetType() != null && result.getTargetType().equalsIgnoreCase("action")) {
 
 								nextAction = result.getTargetName();
+								this.triggerAutomaticEvent("on-result");
 							}
 
-							this.triggerEvent(result.getEvent());
+							this.triggerUserEvent(result.getEvent());
 						}
 					}
 
 				}
+
 				if (forwardType != null)
-					this.triggerEvent(forwardType.getEvent());
+					this.triggerUserEvent(forwardType.getEvent());
 
 				if (nextAction.isEmpty())
 					break;
@@ -285,11 +283,12 @@ public class ActivityImpl implements IActivity {
 							new ExceptionResultDetectionProcessor(this, ex));
 
 					if (result != null) {
+						this.triggerAutomaticEvent("on-result");
 
 						CollectionUtil.map(result.getBinds(), this.getOutputBindProcessor());
 
 						nextAction = (result.getTargetName() != null ? result.getTargetName() : "");
-						this.triggerEvent(result.getEvent());
+						this.triggerUserEvent(result.getEvent());
 					}
 
 				}
@@ -303,35 +302,39 @@ public class ActivityImpl implements IActivity {
 		}
 
 		CollectionUtil.map(this.getSettings().getOutputBinds(), this.getOutputBindProcessor());
-
+		this.triggerAutomaticEvent("on-activity-end");
 		return response;
 
 	}
 
-	public IMapProcessor<StateType> stateProcessor = null;
+	protected ActivityEventProcessor activityEventProcessor = null;
 
-	synchronized public IMapProcessor<StateType> getStateProcessor() {
+	synchronized public ActivityEventProcessor getActivityEventProcessor() {
 
-		if (stateProcessor == null)
-			this.stateProcessor = new StateProcessor(this);
+		if (activityEventProcessor == null)
+			this.activityEventProcessor = new ActivityEventProcessor(this);
 
-		return stateProcessor;
+		activityEventProcessor.setBindProcessor((scope.containsKey("output-action-message") ? this.getOutputBindProcessor() : this
+				.getInputBindProcessor()));
+		return activityEventProcessor;
 	}
 
-	private void triggerEvent(String name) throws Throwable {
+	private void triggerAutomaticEvent(String name) throws Throwable {
+		if (this.settings.getEventsMap().containsKey(name)) {
+			triggerEvent(this.settings.getEventsMap().get(name));
+		}
+	}
 
+	private void triggerUserEvent(String name) throws Throwable {
 		if (name != null) {
-
 			if (!this.settings.getEventsMap().containsKey(name))
 				throw new EventNotFoundException(name);
-
-			EventType event = this.settings.getEventsMap().get(name);
-
-			CollectionUtil.map(event.getStates(), this.getStateProcessor());
-			CollectionUtil.map(event.getBinds(),
-					(scope.containsKey("output-action-message") ? this.getOutputBindProcessor() : this.getInputBindProcessor()));
+			triggerEvent(this.settings.getEventsMap().get(name));
 		}
+	}
 
+	private void triggerEvent(EventType event) throws Throwable {
+		CollectionUtil.map(event.getBindsAndStates(), this.getActivityEventProcessor());
 	}
 
 	public UUID getUUID() {
