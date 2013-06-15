@@ -13,7 +13,12 @@ public class PutEventProcessor implements IMapProcessor<EventType> {
 	}
 
 	public boolean execute(EventType eventType) throws Throwable {
-		activitySettings.getEventsMap().put(eventType.getName(), eventType);
+
+		if (activitySettings.getEventsMap().containsKey(eventType.getName())) {
+			activitySettings.getEventsMap().get(eventType.getName()).getBindsAndStates().addAll(eventType.getBindsAndStates());
+		} else
+			activitySettings.getEventsMap().put(eventType.getName(), eventType);
+
 		return true;
 
 	}

@@ -29,9 +29,9 @@ import pt.jma.orchestration.util.thread.ThreadActivity;
 
 public class ActivityImpl implements IActivity {
 
-	static Map<String, IConverter> converters = new HashMap<String, IConverter>();
+	private static Map<String, IConverter> converters = new HashMap<String, IConverter>();
 
-	static IConverter getConverter(IActivitySettings settings, BindType bindType) throws Exception {
+	protected static IConverter getConverter(IActivitySettings settings, BindType bindType) throws Exception {
 
 		synchronized (converters) {
 
@@ -68,13 +68,13 @@ public class ActivityImpl implements IActivity {
 
 	}
 
-	Map<String, IAtomicMapUtil> scope = new HashMap<String, IAtomicMapUtil>();
+	private Map<String, IAtomicMapUtil> scope = new HashMap<String, IAtomicMapUtil>();
 	IMapUtil state = new MapUtil();
 
-	static Map<String, String> inputScopesFrom = new HashMap<String, String>();
-	static Map<String, String> inputScopesTo = new HashMap<String, String>();
-	static Map<String, String> outputScopesFrom = new HashMap<String, String>();
-	static Map<String, String> outputScopesTo = new HashMap<String, String>();
+	protected static Map<String, String> inputScopesFrom = new HashMap<String, String>();
+	protected static Map<String, String> inputScopesTo = new HashMap<String, String>();
+	protected static Map<String, String> outputScopesFrom = new HashMap<String, String>();
+	protected static Map<String, String> outputScopesTo = new HashMap<String, String>();
 
 	static {
 
@@ -102,7 +102,7 @@ public class ActivityImpl implements IActivity {
 
 	}
 
-	private IMapProcessor<BindType> inputBindProcessor = null;
+	protected IMapProcessor<BindType> inputBindProcessor = null;
 	private IMapProcessor<BindType> outputBindProcessor = null;
 
 	synchronized public IMapProcessor<BindType> getInputBindProcessor() {
@@ -129,7 +129,7 @@ public class ActivityImpl implements IActivity {
 
 	Map<String, IServiceInvocation> serviceInvocationCache = new HashMap<String, IServiceInvocation>();
 
-	public IServiceInvocation getServiceInvocation(ServiceType serviceType, ActionType actionType, String adapterClassName)
+	protected IServiceInvocation getServiceInvocation(ServiceType serviceType, ActionType actionType, String adapterClassName)
 			throws Throwable {
 
 		String name = actionType.getName();
@@ -172,13 +172,10 @@ public class ActivityImpl implements IActivity {
 
 		CollectionUtil.map(this.getSettings().getInputBinds(), this.getInputBindProcessor());
 
-		if (state.containsKey("start")) {
-			state.put("start", "False");
-			this.triggerAutomaticEvent("on-activity-restart");
-		} else {
-			state.put("start", "True");
-			this.triggerAutomaticEvent("on-activity-start");
-		}
+		Boolean startCond = !state.containsKey("start");
+
+		state.put("start", startCond.toString());
+		this.triggerAutomaticEvent(startCond ? "on-activity-start" : "on-activity-restart");
 
 		if (this.settings.getStartActivityEvent() != null)
 			this.triggerUserEvent(this.settings.getStartActivityEvent());
@@ -213,7 +210,6 @@ public class ActivityImpl implements IActivity {
 				CollectionUtil.map(actionType.getBinds().getInputBind(), this.getInputBindProcessor());
 				this.triggerAutomaticEvent("on-action-invoke");
 				IResponse responseService = serviceInvocationInstance.invoke(serviceRequest);
-
 				response.setOutcome(responseService.getOutcome());
 
 				scope.put("output-action-message", new PessimisticMapUtilLocking(responseService));
@@ -300,16 +296,15 @@ public class ActivityImpl implements IActivity {
 					break;
 			}
 		}
-
-		CollectionUtil.map(this.getSettings().getOutputBinds(), this.getOutputBindProcessor());
 		this.triggerAutomaticEvent("on-activity-end");
+		CollectionUtil.map(this.getSettings().getOutputBinds(), this.getOutputBindProcessor());
 		return response;
 
 	}
 
-	protected ActivityEventProcessor activityEventProcessor = null;
+	ActivityEventProcessor activityEventProcessor = null;
 
-	synchronized public ActivityEventProcessor getActivityEventProcessor() {
+	synchronized protected ActivityEventProcessor getActivityEventProcessor() {
 
 		if (activityEventProcessor == null)
 			this.activityEventProcessor = new ActivityEventProcessor(this);

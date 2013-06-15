@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<xact:activity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xact="urn:pt.jma.orchestration.activity">
-	<xact:properties />
+<xact:activity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xact="urn:pt.jma.orchestration.activity" parent="testeParent">
+
+	<xact:properties>
+		<xact:property name="baby-age">0</xact:property>
+		<xact:property name="adult-age">20</xact:property>
+		<xact:property name="very-old-age">90</xact:property>
+	</xact:properties>
+
 	<xact:actions start="hello-world-action">
 		<xact:action name="hello-world-action" service="teste">
 			<xact:target class="pt.jma.orchestration.test.HelloWorld" method="execute" />
@@ -14,12 +20,28 @@
 			</xact:binds>
 		</xact:action>
 	</xact:actions>
+
 	<xact:results />
+
 	<xact:binds>
 		<xact:input>
 			<xact:bind from="name" to="last-name" scopeTo="global-state" />
 		</xact:input>
-		<xact:output />
+		<xact:output>
+			<xact:bind scopeFrom="state" from="age" to="age" />
+		</xact:output>
 	</xact:binds>
-	<xact:events />
+
+	<xact:events>
+		<xact:event name="on-activity-start">
+			<xact:bind from="baby-age" scopeFrom="properties" to="age" scopeTo="state" />
+		</xact:event>
+		<xact:event name="on-action-invoke">
+			<xact:bind from="adult-age" scopeFrom="properties" to="age" scopeTo="state" />
+		</xact:event>
+		<xact:event name="on-activity-end">
+			<xact:bind from="very-old-age" scopeFrom="properties" to="age" scopeTo="state" />
+		</xact:event>
+	</xact:events>
+
 </xact:activity>
