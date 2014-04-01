@@ -17,7 +17,7 @@ public class XMLActivityContext extends AbstractActivityContext implements IActi
 		
 		String nameComplete = String.format(activityNameMask, name);
 
-		URI activityURI = new URI(String.format("%s%s", activityPath, nameComplete));
+		URI activityURI = new URI(String.format("%s%s", this.activityPath, this.nameComplete));
 		return SerializationUtils.Deserialize(ActivityType.class, activityURI);
 	}
 	
