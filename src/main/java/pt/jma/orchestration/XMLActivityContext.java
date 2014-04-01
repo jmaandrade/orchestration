@@ -5,6 +5,10 @@ import pt.jma.common.xml.SerializationUtils;
 
 public class XMLActivityContext extends AbstractActivityContext implements IActivityContext {
 
+	public IActivity getNewActivityInstance(IActivitySettings settings) throws Exception {
+	
+		return new ActivityImpl(settings);
+	}
 
 	public ContextType getContextConfig() throws Exception {
 		return SerializationUtils.Deserialize(ContextType.class, this.uri.getPath());

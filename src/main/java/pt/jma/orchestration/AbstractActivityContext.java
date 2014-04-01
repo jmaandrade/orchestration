@@ -47,6 +47,7 @@ public abstract class AbstractActivityContext {
 	
 	abstract public ContextType getContextConfig() throws Exception;
 	abstract public ActivityType getActivityConfig(IActivitySettings activitySettings, String name) throws Exception;
+	abstract public IActivity getNewActivityInstance(IActivitySettings settings) throws Exception;
 
 	protected static void loadContextType(AbstractActivityContext activityContext) throws Exception {
 
@@ -145,7 +146,7 @@ public abstract class AbstractActivityContext {
 
 	public synchronized IActivity lookup(String name) throws Exception {
 		try {
-			IActivity instance = (IActivity) new ActivityImpl(this.getActivitySettings(name));
+			IActivity instance =  this.getNewActivityInstance(this.getActivitySettings(name));
 
 			return CollectionUtil.reduce(this.activityInterceptors, new InjectInterceptoresProcessor(this), instance);
 
