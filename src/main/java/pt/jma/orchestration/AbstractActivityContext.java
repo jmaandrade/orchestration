@@ -6,13 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-
 import pt.jma.common.IMapUtil;
 import pt.jma.common.MapUtil;
 import pt.jma.common.collection.CollectionUtil;
-import pt.jma.common.xml.SerializationUtils;
-import pt.jma.common.xml.XMLUtils;
 import pt.jma.orchestration.activity.config.ActivityType;
 import pt.jma.orchestration.context.config.AdapterConfigType;
 import pt.jma.orchestration.context.config.ContextType;
@@ -24,7 +20,7 @@ import pt.jma.orchestration.exception.InvalidStartException;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.result.config.ResultType;
 
-public class ActivityContext implements IActivityContext {
+public abstract class AbstractActivityContext {
 
 	public Map<String, IActivitySettings> mapActivitySettings = new HashMap<String, IActivitySettings>();
 
@@ -45,25 +41,23 @@ public class ActivityContext implements IActivityContext {
 		return properties;
 	}
 
-	public ActivityContext(URI uri) throws Exception {
-
-		ActivityContext.loadContextType(this, uri);
-
+	public AbstractActivityContext() throws Exception {
+	
 	}
+	
+	abstract public ContextType getContextConfig() throws Exception;
+	abstract public ActivityType getActivityConfig(IActivitySettings activitySettings, String name) throws Exception;
 
-	protected static void loadContextType(ActivityContext activityContext, URI uri) throws Exception {
+	protected static void loadContextType(AbstractActivityContext activityContext) throws Exception {
 
 		ContextType contextType = null;
 
 		try {
-			Document document = null;
 
-			document = XMLUtils.parseFile(uri.getPath());
-
-			contextType = SerializationUtils.Deserialize(ContextType.class, document);
+			contextType = activityContext.getContextConfig();
 
 			if (contextType.getParent() != null)
-				ActivityContext.loadContextType(activityContext, new URI(contextType.getParent()));
+				AbstractActivityContext.loadContextType(activityContext, new URI(contextType.getParent()));
 
 			CollectionUtil.map(contextType.getProperties(), new PutPropertyProcessor(activityContext));
 			CollectionUtil.map(contextType.getAdaptersConfig(), new PutAdapterProcessor(activityContext));
@@ -85,13 +79,7 @@ public class ActivityContext implements IActivityContext {
 
 	protected void loadActivityType(IActivitySettings activitySettings, String name) throws Throwable {
 
-		String activityPathMask = ((String) this.properties.get("activity-name-mask"));
-		String path = this.properties.get("activity-uri");
-		String nameComplete = String.format(activityPathMask, name);
-
-		URI activityURI = new URI(String.format("%s%s", path, nameComplete));
-
-		ActivityType activityType = SerializationUtils.Deserialize(ActivityType.class, activityURI);
+		ActivityType activityType = this.getActivityConfig(activitySettings, name);
 
 		if (activityType.getParent() != null) {
 			loadActivityType(activitySettings, activityType.getParent());

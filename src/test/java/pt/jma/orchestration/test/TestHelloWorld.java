@@ -7,7 +7,7 @@ import java.net.URI;
 
 import org.junit.Test;
 
-import pt.jma.orchestration.ActivityContext;
+import pt.jma.orchestration.XMLActivityContext;
 import pt.jma.orchestration.IActivity;
 import pt.jma.orchestration.IActivityContext;
 import pt.jma.orchestration.IRequest;
@@ -20,7 +20,7 @@ public class TestHelloWorld {
 	@Test
 	public void test_1() {
 		try {
-			IActivityContext context = new ActivityContext(new URI("src/test/resources/context.xml"));
+			IActivityContext context = new XMLActivityContext(new URI("src/test/resources/context.xml"));
 			IActivity activity = context.lookup("teste");
 			IRequest request = new Request();
 			request.put("name", "jma1");
@@ -41,7 +41,7 @@ public class TestHelloWorld {
 	@Test
 	public void test_2() {
 		try {
-			IActivityContext context = new ActivityContext(new URI("src/test/resources/context.xml"));
+			IActivityContext context = new XMLActivityContext(new URI("src/test/resources/context.xml"));
 			IActivity activity = context.lookup("teste");
 			IRequest request = new Request();
 			request.put("name", "jma2");
@@ -59,7 +59,7 @@ public class TestHelloWorld {
 	@Test
 	public void test_4() {
 		try {
-			IActivityContext context = new ActivityContext(new URI("src/test/resources/context.xml"));
+			IActivityContext context = new XMLActivityContext(new URI("src/test/resources/context.xml"));
 			IActivity activity = context.lookup("teste2");
 			IRequest request = new Request();
 			request.getContext().put("language", "pt_PT");
@@ -77,7 +77,7 @@ public class TestHelloWorld {
 	@Test
 	public void test_5() {
 		try {
-			IActivityContext context = new ActivityContext(new URI("src/test/resources/context.xml"));
+			IActivityContext context = new XMLActivityContext(new URI("src/test/resources/context.xml"));
 			IActivity activity = context.lookup("teste3");
 			IRequest request = new Request();
 			request.getContext().put("language", "pt_PT");
@@ -96,7 +96,7 @@ public class TestHelloWorld {
 	@Test
 	public void test_6() {
 		try {
-			IActivityContext context = new ActivityContext(new URI("src/test/resources/context.xml"));
+			IActivityContext context = new XMLActivityContext(new URI("src/test/resources/context.xml"));
 			IActivity activity = context.lookup("teste4");
 			IRequest request = new Request();
 			IResponse response = activity.invoke(request);
