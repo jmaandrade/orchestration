@@ -1,13 +1,13 @@
 package pt.jma.orchestration;
 
-import java.net.URI;
+import java.net.URI; 
 import pt.jma.common.xml.SerializationUtils;
 
 public class XMLActivityContext extends AbstractActivityContext implements IActivityContext {
 
 
 	public ContextType getContextConfig() throws Exception {
-		SerializationUtils.Deserialize(ContextType.class, this.uri.getPath());
+		return SerializationUtils.Deserialize(ContextType.class, this.uri.getPath());
 	}
 	
 	public ActivityType getActivityConfig(IActivitySettings activitySettings, String name) throws Exception {
@@ -17,7 +17,7 @@ public class XMLActivityContext extends AbstractActivityContext implements IActi
 		String nameComplete = String.format(activityPathMask, name);
 
 		URI activityURI = new URI(String.format("%s%s", path, nameComplete));
-		SerializationUtils.Deserialize(ActivityType.class, activityURI);
+		return SerializationUtils.Deserialize(ActivityType.class, activityURI);
 	}
 	
 	URI uri;
@@ -29,7 +29,7 @@ public class XMLActivityContext extends AbstractActivityContext implements IActi
 	
 	public void setURI(URI uri) {
 
-		return this.uri = uri;
+		this.uri = uri;
 	}	
 
 	public XMLActivityContext(URI uri) throws Exception {
