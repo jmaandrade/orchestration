@@ -10,13 +10,14 @@ public class XMLActivityContext extends AbstractActivityContext implements IActi
 		return SerializationUtils.Deserialize(ContextType.class, this.uri.getPath());
 	}
 	
+	String activityNameMask = null;
+	String activityPath = null; 
+	
 	public ActivityType getActivityConfig(IActivitySettings activitySettings, String name) throws Exception {
 		
-		String activityPathMask = ((String) super.properties.get("activity-name-mask"));
-		String path = super.properties.get("activity-uri");
-		String nameComplete = String.format(activityPathMask, name);
+		String nameComplete = String.format(activityNameMask, name);
 
-		URI activityURI = new URI(String.format("%s%s", path, nameComplete));
+		URI activityURI = new URI(String.format("%s%s", activityPath, nameComplete));
 		return SerializationUtils.Deserialize(ActivityType.class, activityURI);
 	}
 	
@@ -33,9 +34,13 @@ public class XMLActivityContext extends AbstractActivityContext implements IActi
 	}	
 
 	public XMLActivityContext(URI uri) throws Exception {
+	
 		super(this);
 		this.setURI(uri);
 		AbstractActivityContext.loadContextType(this);
+		
+		this.activityNameMask = super.properties.get("activity-name-mask");
+		this.activityPath = super.properties.get("activity-uri");
 	}
 
 }
