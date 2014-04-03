@@ -3,7 +3,7 @@ package pt.jma.orchestration.adapter;
 import java.io.Serializable;
 
 import pt.jma.common.collection.IMapProcessor;
-import pt.jma.orchestration.IResponse;
+import pt.jma.orchestration.activity.IResponse;
 import pt.jma.orchestration.activity.config.BindType;
 import clojure.lang.IPersistentMap;
 import clojure.lang.RT;

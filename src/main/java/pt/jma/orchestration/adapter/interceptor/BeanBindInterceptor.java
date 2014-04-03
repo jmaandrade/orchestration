@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import pt.jma.common.StringUtils;
-import pt.jma.orchestration.IRequest;
-import pt.jma.orchestration.IResponse;
+import pt.jma.orchestration.activity.IRequest;
+import pt.jma.orchestration.activity.IResponse;
 import pt.jma.orchestration.activity.config.BindType;
 
 public class BeanBindInterceptor extends AbstractServiceInterceptor {

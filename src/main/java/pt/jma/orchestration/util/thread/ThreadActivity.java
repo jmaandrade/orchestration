@@ -1,8 +1,8 @@
 package pt.jma.orchestration.util.thread;
 
-import pt.jma.orchestration.IActivity;
-import pt.jma.orchestration.IRequest;
-import pt.jma.orchestration.IResponse;
+import pt.jma.orchestration.activity.IActivity;
+import pt.jma.orchestration.activity.IRequest;
+import pt.jma.orchestration.activity.IResponse;
 
 public class ThreadActivity extends Thread {
 

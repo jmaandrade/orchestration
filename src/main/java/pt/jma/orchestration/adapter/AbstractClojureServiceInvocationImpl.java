@@ -2,7 +2,6 @@ package pt.jma.orchestration.adapter;
 
 import java.lang.reflect.Method;
 
-import pt.jma.orchestration.IServiceInvocation;
 import pt.jma.orchestration.activity.config.ActionType;
 import clojure.lang.RT;
 import clojure.lang.Symbol;

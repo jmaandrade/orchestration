@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import pt.jma.orchestration.IActivity;
-import pt.jma.orchestration.IRequest;
+import pt.jma.orchestration.activity.IActivity;
+import pt.jma.orchestration.activity.IRequest;
 
 public class ThreadPoolActivity {
 

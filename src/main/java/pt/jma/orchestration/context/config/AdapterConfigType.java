@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
-import pt.jma.orchestration.PropertyType;
+import pt.jma.orchestration.context.PropertyType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AdapterConfigType {

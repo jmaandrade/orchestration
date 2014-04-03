@@ -1,9 +1,8 @@
 package pt.jma.orchestration.adapter;
 
-import pt.jma.orchestration.IRequest;
-import pt.jma.orchestration.IResponse;
-import pt.jma.orchestration.IServiceInvocation;
-import pt.jma.orchestration.Response;
+import pt.jma.orchestration.activity.IRequest;
+import pt.jma.orchestration.activity.IResponse;
+import pt.jma.orchestration.activity.Response;
 
 public class CustomActionAdapter extends AbstractServiceInvocationImpl implements IServiceInvocation {
 

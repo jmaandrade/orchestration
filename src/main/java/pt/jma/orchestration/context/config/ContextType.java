@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import pt.jma.orchestration.PropertyType;
+import pt.jma.orchestration.context.PropertyType;
 import pt.jma.orchestration.result.config.ResultType;
 
 @XmlAccessorType(XmlAccessType.FIELD)

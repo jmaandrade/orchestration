@@ -7,12 +7,12 @@ import java.net.URI;
 
 import org.junit.Test;
 
-import pt.jma.orchestration.XMLActivityContext;
-import pt.jma.orchestration.IActivity;
-import pt.jma.orchestration.IActivityContext;
-import pt.jma.orchestration.IRequest;
-import pt.jma.orchestration.IResponse;
-import pt.jma.orchestration.Request;
+import pt.jma.orchestration.activity.IActivity;
+import pt.jma.orchestration.activity.IRequest;
+import pt.jma.orchestration.activity.IResponse;
+import pt.jma.orchestration.activity.Request;
+import pt.jma.orchestration.context.IActivityContext;
+import pt.jma.orchestration.context.XMLActivityContext;
 import pt.jma.orchestration.util.thread.ThreadActivity;
 
 public class TestHelloWorld {

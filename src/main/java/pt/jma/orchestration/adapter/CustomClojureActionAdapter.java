@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pt.jma.common.collection.CollectionUtil;
-import pt.jma.orchestration.IRequest;
-import pt.jma.orchestration.IResponse;
-import pt.jma.orchestration.IServiceInvocation;
-import pt.jma.orchestration.Response;
+import pt.jma.orchestration.activity.IRequest;
+import pt.jma.orchestration.activity.IResponse;
+import pt.jma.orchestration.activity.Response;
 import clojure.lang.IPersistentMap;
 import clojure.lang.PersistentHashMap;
 import clojure.lang.RT;

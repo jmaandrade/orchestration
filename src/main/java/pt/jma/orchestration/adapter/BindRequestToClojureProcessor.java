@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import pt.jma.common.collection.IMapProcessor;
-import pt.jma.orchestration.IRequest;
+import pt.jma.orchestration.activity.IRequest;
 import pt.jma.orchestration.activity.config.BindType;
 import clojure.lang.RT;
 
