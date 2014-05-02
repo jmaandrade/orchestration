@@ -58,18 +58,7 @@ public abstract class AbstractService {
 
 	IAdapter adapter;
 
-	public AbstractService(IActivity activity, ActionType actionType) throws OrchestrationException {
-		super();
-		this.actionType = actionType;
-		this.activity = activity;
-		try {
-			this.setServiceType(activity.getSettings().getActivityContext().getServices().get(actionType.getService()));
-
-		} catch (Throwable ex) {
-			throw new OrchestrationException(ex);
-
-		}
-	}
+ 
 
 	final public IResponse invoke(IRequest request) throws OrchestrationException {
 
@@ -91,7 +80,11 @@ public abstract class AbstractService {
 	public IAdapter getAdapter() throws OrchestrationException {
 
 		try {
-			if (this.adapter == null) {
+			if 
+			
+			   (this.adapter == null) {
+				this.setServiceType(activity.getSettings().getActivityContext().getServices().get(actionType.getService()));
+				
 				AdapterConfigType adapterConfigType = activity.getSettings().getActivityContext().getAdapters()
 						.get(this.getServiceType().getAdapter());
 

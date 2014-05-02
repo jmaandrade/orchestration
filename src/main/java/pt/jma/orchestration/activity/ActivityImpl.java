@@ -184,7 +184,10 @@ public class ActivityImpl extends AbstractActivity implements IActivity {
 
 	@Override
 	IService getServiceInstance(ActionType actionType) throws Throwable {
-		return new ServiceImpl(this, actionType);
+		ServiceImpl instance = new ServiceImpl();
+		instance.setActionType(actionType);
+		instance.setActivity(this);
+		return (IService) instance;
 	}
 
 
