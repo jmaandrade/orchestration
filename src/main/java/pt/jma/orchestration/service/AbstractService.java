@@ -60,7 +60,7 @@ public abstract class AbstractService {
 
  
 
-	final public IResponse invoke(IRequest request) throws OrchestrationException {
+	public IResponse invoke(IRequest request) throws OrchestrationException {
 
 		try {
 			this.getAdapter().beforeInvoke(request);

@@ -64,7 +64,7 @@ public abstract class AbstractAdapter {
 		throw new OrchestrationException(ex);
 	}
 
-	final public IResponse invoke(IRequest request) throws OrchestrationException {
+	public IResponse invoke(IRequest request) throws OrchestrationException {
 
 		IAction action = null;
 
