@@ -6,9 +6,9 @@ import pt.jma.orchestration.activity.config.StateType;
 
 public class StateProcessor implements IMapProcessor<StateType> {
 
-	IActivity activity;
+	AbstractActivity activity;
 
-	public StateProcessor(IActivity activity) {
+	public StateProcessor(AbstractActivity activity) {
 		super();
 		this.activity = activity;
 	}

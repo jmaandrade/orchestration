@@ -3,9 +3,10 @@ package pt.jma.orchestration.context;
 import pt.jma.common.collection.IMapProcessor;
 import pt.jma.orchestration.context.config.ConverterType;
 
-public class PutConverterProcessor extends AbstractContextProcessor implements IMapProcessor<ConverterType> {
+public class PutConverterProcessor extends AbstractContextProcessor implements
+		IMapProcessor<ConverterType> {
 
-	public PutConverterProcessor(ActivityContext activityContext) {
+	public PutConverterProcessor(AbstractActivityContext activityContext) {
 		super(activityContext);
 
 	}

@@ -1,9 +1,6 @@
 package pt.jma.orchestration.context;
 
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import pt.jma.common.IMapUtil;
@@ -20,25 +17,20 @@ import pt.jma.orchestration.activity.config.ActivityType;
 import pt.jma.orchestration.context.config.AdapterConfigType;
 import pt.jma.orchestration.context.config.ContextType;
 import pt.jma.orchestration.context.config.ConverterType;
-import pt.jma.orchestration.context.config.InterceptorConfigType;
-import pt.jma.orchestration.context.config.InterceptorType;
 import pt.jma.orchestration.context.config.ServiceType;
 import pt.jma.orchestration.exception.InvalidStartException;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.result.config.ResultType;
 
-public abstract class AbstractActivityContext {
+public abstract class AbstractActivityContext implements IActivityContext {
 
 	public Map<String, IActivitySettings> mapActivitySettings = new HashMap<String, IActivitySettings>();
 
 	Map<String, String> properties = new HashMap<String, String>();
 	Map<String, ConverterType> converters = new HashMap<String, ConverterType>();
 	Map<String, ServiceType> services = new HashMap<String, ServiceType>();
-	Map<String, InterceptorConfigType> interceptors = new HashMap<String, InterceptorConfigType>();
 	Map<String, AdapterConfigType> adapters = new HashMap<String, AdapterConfigType>();
 	Map<String, Map<String, ResultType>> results = new HashMap<String, Map<String, ResultType>>();
-
-	List<InterceptorType> activityInterceptors = new ArrayList<InterceptorType>();
 
 	public Map<String, Map<String, ResultType>> getResults() {
 		return results;
@@ -49,40 +41,34 @@ public abstract class AbstractActivityContext {
 	}
 
 	public AbstractActivityContext() throws Exception {
-	
+
 	}
-	
+
 	abstract public ContextType getContextConfig() throws Exception;
+
+	abstract public ContextType getParentContextConfig(ContextType contextType) throws Exception;
+
 	abstract public ActivityType getActivityConfig(IActivitySettings activitySettings, String name) throws Exception;
+
 	abstract public IActivity getNewActivityInstance(IActivitySettings settings) throws Exception;
 
-	protected static void loadContextType(AbstractActivityContext activityContext) throws Exception {
-
-		ContextType contextType = null;
+	protected void loadContextType(ContextType contextType) throws Exception {
 
 		try {
 
-			contextType = activityContext.getContextConfig();
-
 			if (contextType.getParent() != null)
-				AbstractActivityContext.loadContextType(activityContext, new URI(contextType.getParent()));
+				this.loadContextType(this.getParentContextConfig(contextType));
 
-			CollectionUtil.map(contextType.getProperties(), new PutPropertyProcessor(activityContext));
-			CollectionUtil.map(contextType.getAdaptersConfig(), new PutAdapterProcessor(activityContext));
-			CollectionUtil.map(contextType.getInterceptorsConfig(), new PutInterceptorProcessor(activityContext.getInterceptors()));
-			CollectionUtil.map(contextType.getServices(), new PutServiceProcessor(activityContext));
-			CollectionUtil.map(contextType.getResults(), new PutResultProcessor(activityContext.getResults()));
-			CollectionUtil.map(contextType.getConvertersConfig(), new PutConverterProcessor(activityContext));
-			CollectionUtil.map(contextType.getActivityInterceptors(), new AddActivityInterceptorProcessor(activityContext));
+			CollectionUtil.map(contextType.getProperties(), new PutPropertyProcessor(this));
+			CollectionUtil.map(contextType.getAdaptersConfig(), new PutAdapterProcessor(this));
+			CollectionUtil.map(contextType.getServices(), new PutServiceProcessor(this));
+			CollectionUtil.map(contextType.getResults(), new PutResultProcessor(this.getResults()));
+			CollectionUtil.map(contextType.getConvertersConfig(), new PutConverterProcessor(this));
 
 		} catch (Throwable ex) {
 			throw new OrchestrationException(ex);
 		}
 
-	}
-
-	public List<InterceptorType> getActivityInterceptors() {
-		return activityInterceptors;
 	}
 
 	protected void loadActivityType(IActivitySettings activitySettings, String name) throws Throwable {
@@ -153,12 +139,10 @@ public abstract class AbstractActivityContext {
 
 	public synchronized IActivity lookup(String name) throws Exception {
 		try {
-			IActivity instance =  this.getNewActivityInstance(this.getActivitySettings(name));
-
-			return CollectionUtil.reduce(this.activityInterceptors, new InjectInterceptoresProcessor(this), instance);
+			return this.getNewActivityInstance(this.getActivitySettings(name));
 
 		} catch (Throwable ex) {
-			throw new Exception(ex);
+			throw new OrchestrationException(ex);
 		}
 	}
 
@@ -168,10 +152,6 @@ public abstract class AbstractActivityContext {
 
 	public Map<String, ConverterType> getConverters() throws Exception {
 		return this.converters;
-	}
-
-	public Map<String, InterceptorConfigType> getInterceptors() throws Exception {
-		return this.interceptors;
 	}
 
 	public Map<String, ServiceType> getServices() throws Exception {

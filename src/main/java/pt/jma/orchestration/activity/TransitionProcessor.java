@@ -12,7 +12,7 @@ import pt.jma.orchestration.activity.config.TransitionType;
 public class TransitionProcessor implements IMapProcessor<TransitionType> {
 
 	StateType stateType;
-	IActivity activity;
+	AbstractActivity activity;
 
 	static Map<String, String> stateTransitionScopesFrom = new HashMap<String, String>();
 	static Map<String, String> stateTransitionScopesTo = new HashMap<String, String>();
@@ -26,7 +26,7 @@ public class TransitionProcessor implements IMapProcessor<TransitionType> {
 		stateTransitionScopesTo.put("global-state", "global-state");
 	}
 
-	public TransitionProcessor(IActivity activity, StateType stateType) {
+	public TransitionProcessor(AbstractActivity activity, StateType stateType) {
 		super();
 		this.stateType = stateType;
 		this.activity = activity;

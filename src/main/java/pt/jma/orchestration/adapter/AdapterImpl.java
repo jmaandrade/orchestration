@@ -1,19 +1,18 @@
 package pt.jma.orchestration.adapter;
 
-import pt.jma.orchestration.activity.IRequest;
-import pt.jma.orchestration.activity.IResponse;
-import pt.jma.orchestration.activity.Response;
+import pt.jma.orchestration.exception.OrchestrationException;
 
-public class CustomActionAdapter extends AbstractServiceInvocationImpl implements IServiceInvocation {
+public class AdapterImpl extends AbstractAdapter implements IAdapter {
 
-	public IResponse invoke(IRequest request) throws Exception {
+	public void beforeInvoke() {
+	}
 
-		Object returnValue = this.getMethod().invoke(this.getTargetInstance());
+	public void afterInvoke() {
+	}
 
-		IResponse response = new Response();
-		response.setOutcome(returnValue == null || !(returnValue instanceof String) ? "success" : ((String) returnValue));
-		return response;
-
+	public void handleException(Throwable ex) throws OrchestrationException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="urn:pt.jma.orchestration.context"
+<xs:schema attributeFormDefault="unqualified"
+	elementFormDefault="qualified" targetNamespace="urn:pt.jma.orchestration.context"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:c="urn:pt.jma.orchestration.context">
 	<xs:element name="context" type="c:contextType" />
 	<xs:complexType name="propertyType">
@@ -11,7 +12,8 @@
 	</xs:complexType>
 	<xs:complexType name="propertiesType">
 		<xs:sequence>
-			<xs:element type="c:propertyType" name="property" maxOccurs="unbounded" minOccurs="0"  />
+			<xs:element type="c:propertyType" name="property"
+				maxOccurs="unbounded" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="converterType">
@@ -24,71 +26,43 @@
 	</xs:complexType>
 	<xs:complexType name="convertersConfigType">
 		<xs:sequence>
-			<xs:element type="c:converterType" name="converter" maxOccurs="unbounded" minOccurs="0"  />
+			<xs:element type="c:converterType" name="converter"
+				maxOccurs="unbounded" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="adapterConfigType" mixed="true">
 		<xs:sequence>
-			<xs:element type="c:propertiesType" name="properties" minOccurs="0"  />
+			<xs:element type="c:propertiesType" name="properties"
+				minOccurs="0" />
 		</xs:sequence>
 		<xs:attribute type="xs:string" name="name" />
 		<xs:attribute type="xs:string" name="class" />
 	</xs:complexType>
 	<xs:complexType name="adaptersConfigType">
 		<xs:sequence>
-			<xs:element type="c:adapterConfigType" name="adapterConfig" maxOccurs="unbounded" minOccurs="0"
-				 />
-		</xs:sequence>
-	</xs:complexType>
-	
-		<xs:complexType name="activityInterceptoresConfigType" mixed="true">
-		<xs:sequence>
-			<xs:element type="c:interceptorType" name="interceptor" maxOccurs="unbounded" minOccurs="0" />
+			<xs:element type="c:adapterConfigType" name="adapterConfig"
+				maxOccurs="unbounded" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
 
-	
-	
-	<xs:complexType name="interceptorConfigType" mixed="true">
-		<xs:sequence>
-			<xs:element type="c:propertiesType" name="properties" minOccurs="0"  />
-		</xs:sequence>
-		<xs:attribute type="xs:string" name="name" />
-		<xs:attribute type="xs:string" name="class" />
-	</xs:complexType>
-	<xs:complexType name="interceptoresConfigType">
-		<xs:sequence>
-			<xs:element type="c:interceptorConfigType" name="interceptorConfig" maxOccurs="unbounded" minOccurs="0"
-				 />
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="interceptorType">
-		<xs:sequence>
-			<xs:element type="c:propertiesType" name="properties" minOccurs="0"  />
-		</xs:sequence>
-		<xs:attribute type="xs:string" name="name" />
-	</xs:complexType>
-	<xs:complexType name="interceptoresType">
-		<xs:sequence>
-			<xs:element type="c:interceptorType" name="interceptor" maxOccurs="unbounded" minOccurs="0"
-				 />
-		</xs:sequence>
-	</xs:complexType>
 	<xs:complexType name="serviceType" mixed="true">
 		<xs:sequence>
-			<xs:element type="c:interceptoresType" name="interceptores" minOccurs="0"  />
+			<xs:element type="c:propertiesType" name="properties"
+				minOccurs="0" />
 		</xs:sequence>
 		<xs:attribute type="xs:string" name="name" />
 		<xs:attribute type="xs:string" name="adapter" />
 	</xs:complexType>
 	<xs:complexType name="servicesType">
 		<xs:sequence>
-			<xs:element type="c:serviceType" name="service" maxOccurs="unbounded" minOccurs="0"  />
+			<xs:element type="c:serviceType" name="service" maxOccurs="unbounded"
+				minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="resultsType">
 		<xs:sequence>
-			<xs:element type="c:resultType" name="result" maxOccurs="unbounded" minOccurs="0" xmlns:pt="urn:pt.jma.orchestration.activity" />
+			<xs:element type="c:resultType" name="result" maxOccurs="unbounded"
+				minOccurs="0" xmlns:pt="urn:pt.jma.orchestration.activity" />
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="resultType">
@@ -99,13 +73,13 @@
 	</xs:complexType>
 	<xs:complexType name="contextType">
 		<xs:sequence>
-			<xs:element type="c:propertiesType" name="properties" minOccurs="0"  />
-			<xs:element type="c:convertersConfigType" name="convertersConfig" minOccurs="0"  />
-			<xs:element type="c:adaptersConfigType" name="adaptersConfig"  />
-			<xs:element type="c:activityInterceptoresConfigType" name="activityInterceptoresConfig"  />
-			<xs:element type="c:interceptoresConfigType" name="interceptoresConfig" minOccurs="0"  />
-			<xs:element type="c:servicesType" name="services"  />
-			<xs:element type="c:resultsType" name="results"  />
+			<xs:element type="c:propertiesType" name="properties"
+				minOccurs="0" />
+			<xs:element type="c:convertersConfigType" name="convertersConfig"
+				minOccurs="0" />
+			<xs:element type="c:adaptersConfigType" name="adaptersConfig" />
+			<xs:element type="c:servicesType" name="services" />
+			<xs:element type="c:resultsType" name="results" />
 		</xs:sequence>
 		<xs:attribute type="xs:string" name="parent" use="optional" />
 	</xs:complexType>

@@ -9,8 +9,6 @@ public class TargetType {
 
 	@XmlAttribute(name = "class")
 	protected String clazz;
-	@XmlAttribute
-	protected String method;
 
 	/**
 	 * Gets the value of the clazz property.
@@ -31,27 +29,6 @@ public class TargetType {
 	 */
 	public void setClazz(String value) {
 		this.clazz = value;
-	}
-
-	/**
-	 * Gets the value of the method property.
-	 * 
-	 * @return possible object is {@link String }
-	 * 
-	 */
-	public String getMethod() {
-		return method;
-	}
-
-	/**
-	 * Sets the value of the method property.
-	 * 
-	 * @param value
-	 *            allowed object is {@link String }
-	 * 
-	 */
-	public void setMethod(String value) {
-		this.method = value;
 	}
 
 }

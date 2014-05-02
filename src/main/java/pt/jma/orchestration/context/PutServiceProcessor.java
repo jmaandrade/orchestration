@@ -5,7 +5,7 @@ import pt.jma.orchestration.context.config.ServiceType;
 
 public class PutServiceProcessor extends AbstractContextProcessor implements IMapProcessor<ServiceType> {
 
-	public PutServiceProcessor(ActivityContext activityContext) {
+	public PutServiceProcessor(AbstractActivityContext activityContext) {
 		super(activityContext);
 	}
 

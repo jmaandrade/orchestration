@@ -1,25 +1,21 @@
-package pt.jma.orchestration.adapter;
+package pt.jma.orchestration.service;
 
-import java.lang.reflect.Method;
+import java.util.Map;
 
 import pt.jma.orchestration.activity.IRequest;
 import pt.jma.orchestration.activity.IResponse;
 import pt.jma.orchestration.activity.config.ActionType;
+import pt.jma.orchestration.adapter.IAdapter;
+import pt.jma.orchestration.exception.OrchestrationException;
 
-public interface IServiceInvocation {
-
-	String getTargetClassName();
+public interface IService {
 
 	ActionType getActionType();
 
-	void setActionType(ActionType actionType);
+	Map<String, String> getProperties();
 
-	Method getMethod() throws Exception;
+	IResponse invoke(IRequest request) throws OrchestrationException;
 
-	Object getTargetInstance() throws Exception;
-
-	void setTargetInstance(Object targetInstance) throws Exception;
-
-	IResponse invoke(IRequest request) throws Exception;
+	IAdapter getAdapter() throws OrchestrationException;
 
 }

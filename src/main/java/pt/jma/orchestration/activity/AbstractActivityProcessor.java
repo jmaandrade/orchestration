@@ -1,9 +1,8 @@
 package pt.jma.orchestration.activity;
 
-
 public abstract class AbstractActivityProcessor {
 
-	IActivitySettings activitySettings;
+	protected IActivitySettings activitySettings;
 
 	public AbstractActivityProcessor(IActivitySettings activitySettings) {
 		super();

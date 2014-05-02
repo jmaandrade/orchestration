@@ -1,26 +1,37 @@
 package pt.jma.orchestration.test;
 
+import static org.junit.Assert.fail;
+
+import java.net.URI;
+
 import org.junit.Test;
 
-public class TestDummy {
+import pt.jma.orchestration.activity.IActivity;
+import pt.jma.orchestration.activity.IRequest;
+import pt.jma.orchestration.activity.IResponse;
+import pt.jma.orchestration.activity.Request;
+import pt.jma.orchestration.context.IActivityContext;
+import pt.jma.orchestration.context.XMLActivityContext;
 
-	public int fibonacci(int n) {
-		return (n < 2) ? n : fibonacci(n - 1) + fibonacci(n - 2);
-	}
+public class TestHelloWord {
 
-	@Test
-	public void test_1() {
+	 
+		@Test
+		public void test_1() {
+			try {
+				IActivityContext context = new XMLActivityContext(new URI("src/test/resources/context.xml"));
+				IActivity activity = context.lookup("teste");
+				IRequest request = new Request();
+				request.put("name", "jma1");
+				IResponse response = activity.invoke(request);
 
-		int[] s = new int[10];
-		for (int i = 0; i < 10; i++) {
-			s[i] = fibonacci(i);
-		}
+				System.out.printf("test_1() global-state.last-name=%s age=%s\n\n", (String) context.getState().get("last-name"),
+						response.get("age"));
 
-		for (int n : s) {
-			if ((n % 2) == 0) {
-				System.out.printf("%d", n);
+			} catch (Throwable ex) {
+				ex.printStackTrace();
+				fail(ex.getMessage());
 			}
 		}
-	}
 
 }

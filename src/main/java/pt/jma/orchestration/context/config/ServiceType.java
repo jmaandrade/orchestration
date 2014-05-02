@@ -16,19 +16,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
+import pt.jma.orchestration.context.PropertyType;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceType {
-
-	@XmlElementWrapper(name = "interceptores", namespace = "urn:pt.jma.orchestration.context")
-	@XmlElement(name = "interceptor", type = InterceptorType.class, required = true, namespace = "urn:pt.jma.orchestration.context")
-	protected List<InterceptorType> interceptors;
-
-	public List<InterceptorType> getInterceptors() {
-		if (interceptors == null) {
-			interceptors = new ArrayList<InterceptorType>();
-		}
-		return this.interceptors;
-	}
 
 	@XmlAttribute
 	protected String name;
@@ -76,5 +67,17 @@ public class ServiceType {
 	public void setAdapter(String value) {
 		this.adapter = value;
 	}
+	
+	@XmlElementWrapper(name = "properties", namespace = "urn:pt.jma.orchestration.context")
+	@XmlElement(name = "property", type = PropertyType.class, namespace = "urn:pt.jma.orchestration.context")
+	protected List<PropertyType> properties;
+
+	public List<PropertyType> getProperties() {
+		if (properties == null) {
+			properties = new ArrayList<PropertyType>();
+		}
+		return this.properties;
+	}
+
 
 }

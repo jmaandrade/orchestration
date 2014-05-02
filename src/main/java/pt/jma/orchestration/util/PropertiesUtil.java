@@ -9,7 +9,7 @@ import pt.jma.orchestration.context.PropertyType;
 
 public class PropertiesUtil {
 
-	public static Map<String, String> getPropertiesMap(List<PropertyType> list) throws Exception {
+	public static Map<String, String> getPropertiesMap(List<PropertyType> list) {
 
 		Map<String, String> instance = new HashMap<String, String>();
 

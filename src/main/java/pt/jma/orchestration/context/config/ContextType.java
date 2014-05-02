@@ -23,7 +23,7 @@ import pt.jma.orchestration.result.config.ResultType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "context", namespace = "urn:pt.jma.orchestration.context")
-@XmlType(propOrder = { "properties", "convertersConfig", "adaptersConfig", "activityInterceptoresConfig", "interceptorsConfig", "services",
+@XmlType(propOrder = { "properties", "convertersConfig", "adaptersConfig", "services",
 		"results" })
 public class ContextType {
 
@@ -69,28 +69,6 @@ public class ContextType {
 			adaptersConfig = new ArrayList<AdapterConfigType>();
 		}
 		return this.adaptersConfig;
-	}
-
-	@XmlElementWrapper(name = "activityInterceptoresConfig", namespace = "urn:pt.jma.orchestration.context")
-	@XmlElement(name = "interceptor", type = InterceptorType.class, required = true, namespace = "urn:pt.jma.orchestration.context")
-	protected List<InterceptorType> activityInterceptoresConfig;
-
-	public List<InterceptorType> getActivityInterceptors() {
-		if (activityInterceptoresConfig == null) {
-			activityInterceptoresConfig = new ArrayList<InterceptorType>();
-		}
-		return this.activityInterceptoresConfig;
-	}
-
-	@XmlElementWrapper(name = "interceptoresConfig", namespace = "urn:pt.jma.orchestration.context")
-	@XmlElement(name = "interceptorConfig", type = InterceptorConfigType.class, required = true, namespace = "urn:pt.jma.orchestration.context")
-	protected List<InterceptorConfigType> interceptorsConfig;
-
-	public List<InterceptorConfigType> getInterceptorsConfig() {
-		if (interceptorsConfig == null) {
-			interceptorsConfig = new ArrayList<InterceptorConfigType>();
-		}
-		return this.interceptorsConfig;
 	}
 
 	@XmlElementWrapper(name = "services", namespace = "urn:pt.jma.orchestration.context")

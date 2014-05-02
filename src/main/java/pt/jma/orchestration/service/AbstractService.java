@@ -1,55 +1,110 @@
-package pt.jma.orchestration.adapter;
+package pt.jma.orchestration.service;
 
-import java.lang.reflect.Method;
+import java.util.Map;
 
 import pt.jma.common.ReflectionUtil;
+import pt.jma.orchestration.activity.IActivity;
+import pt.jma.orchestration.activity.IRequest;
+import pt.jma.orchestration.activity.IResponse;
 import pt.jma.orchestration.activity.config.ActionType;
+import pt.jma.orchestration.adapter.IAdapter;
+import pt.jma.orchestration.context.config.AdapterConfigType;
+import pt.jma.orchestration.context.config.ServiceType;
+import pt.jma.orchestration.exception.OrchestrationException;
+import pt.jma.orchestration.util.PropertiesUtil;
 
-public abstract class AbstractServiceInvocationImpl implements IServiceInvocation {
+public abstract class AbstractService {
 
-	public AbstractServiceInvocationImpl() {
-		super();
+	IActivity activity;
 
+	public IActivity getActivity() {
+		return activity;
 	}
 
-	public String getTargetClassName() {
-
-		return this.actionType.getTarget().getClazz();
+	public void setActivity(IActivity activity) {
+		this.activity = activity;
 	}
 
-	private Method method = null;
+	Map<String, String> properties = null;
 
-	public Method getMethod() throws Exception {
+	public Map<String, String> getProperties() {
 
-		if (method == null)
-			method = this.getTargetInstance().getClass().getMethod(this.getActionType().getTarget().getMethod(), new Class[] {});
-
-		return method;
-
-	}
-
-	Object targetInstance = null;
-
-	public Object getTargetInstance() throws Exception {
-		if (targetInstance == null) {
-			targetInstance = ReflectionUtil.getInstance(actionType.getTarget().getClazz());
+		if (this.properties == null) {
+			this.properties = PropertiesUtil.getPropertiesMap(serviceType == null ? null : serviceType.getProperties());
 		}
-		return targetInstance;
 
+		return properties;
 	}
 
-	ActionType actionType;
+	ServiceType serviceType;
+
+	public ServiceType getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(ServiceType serviceType) {
+		this.serviceType = serviceType;
+	}
+
+	protected ActionType actionType;
 
 	public ActionType getActionType() {
 		return actionType;
-	}
-
-	public void setTargetInstance(Object targetInstance) {
-		this.targetInstance = targetInstance;
 	}
 
 	public void setActionType(ActionType actionType) {
 		this.actionType = actionType;
 	}
 
+	IAdapter adapter;
+
+	public AbstractService(IActivity activity, ActionType actionType) throws OrchestrationException {
+		super();
+		this.actionType = actionType;
+		this.activity = activity;
+		try {
+			this.setServiceType(activity.getSettings().getActivityContext().getServices().get(actionType.getService()));
+
+		} catch (Throwable ex) {
+			throw new OrchestrationException(ex);
+
+		}
+	}
+
+	final public IResponse invoke(IRequest request) throws OrchestrationException {
+
+		try {
+			this.getAdapter().beforeInvoke(request);
+			IResponse response = this.getAdapter().invoke(request);
+			this.getAdapter().afterInvoke(response);
+			return response;
+
+		} catch (Throwable ex) {
+			this.getAdapter().handleException(ex);
+
+		}
+		
+		return null;
+
+	}
+
+	public IAdapter getAdapter() throws OrchestrationException {
+
+		try {
+			if (this.adapter == null) {
+				AdapterConfigType adapterConfigType = activity.getSettings().getActivityContext().getAdapters()
+						.get(this.getServiceType().getAdapter());
+
+				this.adapter = (IAdapter) ReflectionUtil.getInstance(adapterConfigType.getClazz());
+				this.adapter.setService((IService) this);
+				this.adapter.setAdapterConfigType(adapterConfigType);
+			}
+
+			return this.adapter;
+
+		} catch (Throwable ex) {
+			throw new OrchestrationException(ex);
+
+		}
+	}
 }

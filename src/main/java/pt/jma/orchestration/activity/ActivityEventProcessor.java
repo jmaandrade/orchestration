@@ -10,10 +10,10 @@ import pt.jma.orchestration.activity.config.StateType;
 
 public class ActivityEventProcessor implements IMapProcessor<Object> {
 
-	IActivity activity;
+	AbstractActivity activity;
 	IMapProcessor<BindType> bindProcessor = null;
 
-	public ActivityEventProcessor(IActivity activity) {
+	public ActivityEventProcessor(AbstractActivity activity) {
 		super();
 		this.activity = activity;
 	}

@@ -11,10 +11,10 @@ import pt.jma.orchestration.exception.InvalidScopeException;
 
 public class BindProcessor implements IMapProcessor<BindType> {
 
-	IActivity activity;
+	AbstractActivity activity;
 	Map<String, String> scopesFromMap;
 
-	public BindProcessor(IActivity activity, Map<String, String> scopesFromMap, Map<String, String> scopesToMap) {
+	public BindProcessor(AbstractActivity activity, Map<String, String> scopesFromMap, Map<String, String> scopesToMap) {
 		super();
 		this.activity = activity;
 		this.scopesFromMap = scopesFromMap;

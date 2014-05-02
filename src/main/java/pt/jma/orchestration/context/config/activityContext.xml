@@ -31,35 +31,10 @@
 			</c:properties>
 		</c:adapterConfig>
 	</c:adaptersConfig>
-	<c:interceptoresConfig>
-		<c:interceptorConfig name="dlkfsjd" class="dlkfsjd">
-			<c:properties>
-				<c:property name="dlkfsjd">34343433็423็4l23็บl2บ</c:property>
-				<c:property name="dlkfsjd">34343433็423็4l23็บl2บ</c:property>
-			</c:properties>
-		</c:interceptorConfig>
-		<c:interceptorConfig name="dlkfsjd" class="dlkfsjd">
-			<c:properties>
-				<c:property name="dlkfsjd">34343433็423็4l23็บl2บ</c:property>
-				<c:property name="dlkfsjd">34343433็423็4l23็บl2บ</c:property>
-			</c:properties>
-		</c:interceptorConfig>
-		<c:interceptorConfig name="dlkfsjd" class="dlkfsjd" />
-	</c:interceptoresConfig>
 	<c:services>
 		<c:service name="dlkfsjd" adapter="dlkfsjd">
-			<c:interceptores>
-				<c:interceptor name="dlkfsjd" />
-				<c:interceptor name="dlkfsjd" />
-				<c:interceptor name="dlkfsjd" />
-				<c:interceptor name="dlkfsjd" />
-			</c:interceptores>
 		</c:service>
 		<c:service name="dlkfsjd" adapter="dlkfsjd">
-			<c:interceptores>
-				<c:interceptor name="dlkfsjd" />
-				<c:interceptor name="dlkfsjd" />
-			</c:interceptores>
 		</c:service>
 		<c:service name="dlkfsjd" adapter="dlkfsjd">
 		</c:service>
