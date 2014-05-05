@@ -17,9 +17,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import pt.jma.orchestration.context.PropertyType;
+import pt.jma.orchestration.util.IConfigProperties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AdapterConfigType {
+public class AdapterConfigType  implements IConfigProperties {
 
 	@XmlElementWrapper(name = "properties", namespace = "urn:pt.jma.orchestration.context")
 	@XmlElement(name = "property", type = PropertyType.class, namespace = "urn:pt.jma.orchestration.context")

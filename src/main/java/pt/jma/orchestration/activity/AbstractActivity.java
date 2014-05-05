@@ -11,11 +11,15 @@ import pt.jma.common.atomic.IAtomicMapUtil;
 import pt.jma.common.collection.CollectionUtil;
 import pt.jma.common.collection.IMapProcessor;
 import pt.jma.orchestration.activity.config.ActionType;
+import pt.jma.orchestration.activity.config.ActivityType;
 import pt.jma.orchestration.activity.config.BindType;
 import pt.jma.orchestration.activity.config.EventType;
+import pt.jma.orchestration.context.config.ConverterType;
 import pt.jma.orchestration.converters.IConverter;
 import pt.jma.orchestration.exception.EventNotFoundException;
 import pt.jma.orchestration.service.IService;
+import pt.jma.orchestration.util.AbstractConfigurableElement;
+import pt.jma.orchestration.util.IConfigurableElement;
 
 public abstract class AbstractActivity {
 
@@ -44,10 +48,15 @@ public abstract class AbstractActivity {
 		synchronized (converters) {
 
 			if (!converters.containsKey(bindType.getConverter())) {
-				converters.put(
-						bindType.getConverter(),
-						(IConverter) ReflectionUtil.getInstance(settings.getActivityContext().getConverters().get(bindType.getConverter())
-								.getClazz()));
+
+				ConverterType converterType = settings.getActivityContext().getConverters().get(bindType.getConverter());
+
+				Object converter = ReflectionUtil.getInstance(converterType.getClazz());
+
+				IConfigurableElement<ConverterType> configurableElement = (IConfigurableElement<ConverterType>) converter;
+				configurableElement.setConfig(converterType);
+
+				converters.put(bindType.getConverter(), (IConverter) converter);
 			}
 		}
 
@@ -147,15 +156,18 @@ public abstract class AbstractActivity {
 
 		synchronized (serviceCache) {
 			if (!serviceCache.containsKey(name)) {
-				IService service = this.getServiceInstance(actionType);
-				serviceCache.put(name, service);
+				IService service = this.getServiceInstance();
+				service.setConfig(this.getSettings().getActivityContext().getServices().get(actionType.getService()));
+				service.setActionType(actionType);
+				service.setActivity((IActivity) this);
+				serviceCache.put(name, (IService) service);
 
 			}
 			return serviceCache.get(name);
 		}
 
 	}
-	
-	abstract IService getServiceInstance(ActionType actionType) throws Throwable;
-	 
+
+	abstract IService getServiceInstance() throws Throwable;
+
 }

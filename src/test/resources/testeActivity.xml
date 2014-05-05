@@ -12,10 +12,10 @@
 			<xact:target class="pt.jma.orchestration.test.HelloWordAction" />
 			<xact:binds>
 				<xact:input>
-					<xact:bind from="name" to="name" />
+					<xact:bind from="name" to="name" converter="AddPersonTitle"/>
 				</xact:input>
 				<xact:output>
-					<xact:bind from="sayHi" to="sayHi" />
+					<xact:bind from="sayHi" to="sayHi"/>
 				</xact:output>
 			</xact:binds>
 		</xact:action>

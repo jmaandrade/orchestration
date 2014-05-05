@@ -15,23 +15,22 @@ import pt.jma.orchestration.context.XMLActivityContext;
 
 public class TestHelloWord {
 
-	 
-		@Test
-		public void test_1() {
-			try {
-				IActivityContext context = new XMLActivityContext(new URI("src/test/resources/context.xml"));
-				IActivity activity = context.lookup("teste");
-				IRequest request = new Request();
-				request.put("name", "jma1");
-				IResponse response = activity.invoke(request);
+	@Test
+	public void test_1() {
+		try {
+			IActivityContext context = new XMLActivityContext(new URI("src/test/resources/context.xml"));
+			IActivity activity = context.lookup("teste");
+			IRequest request = new Request();
+			request.put("name", "jma1");
+			IResponse response = activity.invoke(request);
 
-				System.out.printf("test_1() global-state.last-name=%s age=%s\n\n", (String) context.getState().get("last-name"),
-						response.get("age"));
+			System.out.printf("test_1() %s global-state.last-name=%s age=%s\n\n", response.get("sayHi"),
+					(String) context.getState().get("last-name"), response.get("age"));
 
-			} catch (Throwable ex) {
-				ex.printStackTrace();
-				fail(ex.getMessage());
-			}
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+			fail(ex.getMessage());
 		}
+	}
 
 }

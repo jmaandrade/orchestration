@@ -20,12 +20,13 @@ import javax.xml.bind.annotation.XmlType;
 
 import pt.jma.orchestration.context.PropertyType;
 import pt.jma.orchestration.result.config.ResultType;
+import pt.jma.orchestration.util.IConfigProperties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "context", namespace = "urn:pt.jma.orchestration.context")
 @XmlType(propOrder = { "properties", "convertersConfig", "adaptersConfig", "services",
 		"results" })
-public class ContextType {
+public class ContextType  implements IConfigProperties {
 
 	@XmlAttribute
 	protected String parent;

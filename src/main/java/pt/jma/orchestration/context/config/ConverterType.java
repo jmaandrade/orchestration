@@ -7,12 +7,20 @@
 
 package pt.jma.orchestration.context.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
+import pt.jma.orchestration.context.PropertyType;
+import pt.jma.orchestration.util.IConfigProperties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConverterType {
+public class ConverterType implements IConfigProperties {
 
 	@XmlAttribute
 	protected String name;
@@ -33,6 +41,17 @@ public class ConverterType {
 
 	public void setClazz(String value) {
 		this.clazz = value;
+	}
+
+	@XmlElementWrapper(name = "properties", namespace = "urn:pt.jma.orchestration.context")
+	@XmlElement(name = "property", type = PropertyType.class, namespace = "urn:pt.jma.orchestration.context")
+	protected List<PropertyType> properties;
+
+	public List<PropertyType> getProperties() {
+		if (properties == null) {
+			properties = new ArrayList<PropertyType>();
+		}
+		return this.properties;
 	}
 
 }

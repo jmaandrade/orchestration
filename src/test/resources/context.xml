@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<c:context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:c="urn:pt.jma.orchestration.context">
+<c:context xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="urn:pt.jma.orchestration.context">
 	<c:properties>
 		<c:property name="activity-name-mask"><![CDATA[%sActivity.xml]]></c:property>
 		<c:property name="activity-uri"><![CDATA[src/test/resources/]]></c:property>
 	</c:properties>
-	<c:convertersConfig/>
+	<c:convertersConfig>
+		<c:converter name="AddPersonTitle" class="pt.jma.orchestration.test.AddPersonTitle" >
+			<c:properties>
+				<c:property name="title">Mr</c:property>
+			</c:properties>
+		
+		</c:converter>
+	</c:convertersConfig>
 	<c:adaptersConfig>
-		<c:adapterConfig name="CustomActionAdapter" class="pt.jma.orchestration.adapter.AdapterImpl" />
+		<c:adapterConfig name="CustomActionAdapter"
+			class="pt.jma.orchestration.adapter.AdapterImpl" />
 	</c:adaptersConfig>
 	<c:services>
-		<c:service name="teste" adapter="CustomActionAdapter"/>
+		<c:service name="teste" adapter="CustomActionAdapter" />
 	</c:services>
-	<c:results/>
+	<c:results />
 </c:context>

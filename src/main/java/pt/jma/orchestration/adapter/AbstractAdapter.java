@@ -1,7 +1,5 @@
 package pt.jma.orchestration.adapter;
 
-import java.util.Map;
-
 import pt.jma.common.ReflectionUtil;
 import pt.jma.orchestration.activity.IRequest;
 import pt.jma.orchestration.activity.IResponse;
@@ -9,13 +7,11 @@ import pt.jma.orchestration.activity.action.IAction;
 import pt.jma.orchestration.context.config.AdapterConfigType;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.service.IService;
-import pt.jma.orchestration.util.PropertiesUtil;
+import pt.jma.orchestration.util.AbstractConfigurableElement;
+import pt.jma.orchestration.util.IConfigurableElement;
 
-public abstract class AbstractAdapter {
-
-	public void setAdapterConfigType(AdapterConfigType adapterConfigType) {
-		this.adapterConfigType = adapterConfigType;
-	}
+public abstract class AbstractAdapter extends AbstractConfigurableElement<AdapterConfigType> implements
+		IConfigurableElement<AdapterConfigType> {
 
 	IService service;
 
@@ -26,23 +22,6 @@ public abstract class AbstractAdapter {
 	public void setService(IService service) {
 		this.service = service;
 	}
-
-	public AdapterConfigType getAdapterConfigType() {
-		return adapterConfigType;
-	}
-
-	Map<String, String> properties = null;
-
-	public Map<String, String> getProperties() {
-
-		if (this.properties == null) {
-			this.properties = PropertiesUtil.getPropertiesMap(adapterConfigType == null ? null : adapterConfigType.getProperties());
-		}
-
-		return properties;
-	}
-
-	AdapterConfigType adapterConfigType;
 
 	public IAction getNewActionInstance() throws Throwable {
 

@@ -21,14 +21,7 @@ public class BindFn extends AbstractMapUtilEntryFn<Serializable> {
 	@Override
 	public Serializable call() throws Throwable {
 
-		if (value != null) {
-
-			if (converter != null) {
-				value = converter.convert(value);
-			}
-		}
-
-		return value;
+		return (converter != null ? converter.convert(value) : value);
 
 	}
 

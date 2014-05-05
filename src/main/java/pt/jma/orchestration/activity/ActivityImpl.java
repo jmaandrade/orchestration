@@ -159,7 +159,7 @@ public class ActivityImpl extends AbstractActivity implements IActivity {
 				}
 
 				if (result == null)
-					throw ex.getCause()==null? ex: ex.getCause();
+					throw ex.getCause() == null ? ex : ex.getCause();
 
 				if (nextAction.isEmpty())
 					break;
@@ -183,12 +183,8 @@ public class ActivityImpl extends AbstractActivity implements IActivity {
 	}
 
 	@Override
-	IService getServiceInstance(ActionType actionType) throws Throwable {
-		ServiceImpl instance = new ServiceImpl();
-		instance.setActionType(actionType);
-		instance.setActivity(this);
-		return (IService) instance;
+	IService getServiceInstance() throws Throwable {
+		return new ServiceImpl();
 	}
-
 
 }

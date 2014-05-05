@@ -13,11 +13,12 @@ import javax.xml.bind.annotation.XmlType;
 
 import pt.jma.orchestration.context.PropertyType;
 import pt.jma.orchestration.result.config.ResultType;
+import pt.jma.orchestration.util.IConfigProperties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "activity", namespace = "urn:pt.jma.orchestration.activity")
 @XmlType(propOrder = { "properties", "actions", "results", "binds", "events" })
-public class ActivityType {
+public class ActivityType implements IConfigProperties {
 
 	public BindsType getBinds() {
 		return binds;

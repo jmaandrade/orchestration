@@ -9,7 +9,7 @@
 		<c:property name="dlkfsjd">34343433็423็4l23็บl2บ</c:property>
 		<c:property name="dlkfsjd">34343433็423็4l23็บl2บ</c:property>
 	</c:properties>
-	<c:messageImpl class="" />
+
 	<c:convertersConfig>
 		<c:converter name="dlkfsjd" class="dlkfsjd" />
 		<c:converter name="dlkfsjd" class="dlkfsjd" />

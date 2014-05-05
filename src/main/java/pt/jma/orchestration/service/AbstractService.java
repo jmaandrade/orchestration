@@ -1,7 +1,5 @@
 package pt.jma.orchestration.service;
 
-import java.util.Map;
-
 import pt.jma.common.ReflectionUtil;
 import pt.jma.orchestration.activity.IActivity;
 import pt.jma.orchestration.activity.IRequest;
@@ -11,9 +9,10 @@ import pt.jma.orchestration.adapter.IAdapter;
 import pt.jma.orchestration.context.config.AdapterConfigType;
 import pt.jma.orchestration.context.config.ServiceType;
 import pt.jma.orchestration.exception.OrchestrationException;
-import pt.jma.orchestration.util.PropertiesUtil;
+import pt.jma.orchestration.util.AbstractConfigurableElement;
+import pt.jma.orchestration.util.IConfigurableElement;
 
-public abstract class AbstractService {
+public abstract class AbstractService extends AbstractConfigurableElement<ServiceType> implements IConfigurableElement<ServiceType> {
 
 	IActivity activity;
 
@@ -23,27 +22,6 @@ public abstract class AbstractService {
 
 	public void setActivity(IActivity activity) {
 		this.activity = activity;
-	}
-
-	Map<String, String> properties = null;
-
-	public Map<String, String> getProperties() {
-
-		if (this.properties == null) {
-			this.properties = PropertiesUtil.getPropertiesMap(serviceType == null ? null : serviceType.getProperties());
-		}
-
-		return properties;
-	}
-
-	ServiceType serviceType;
-
-	public ServiceType getServiceType() {
-		return serviceType;
-	}
-
-	public void setServiceType(ServiceType serviceType) {
-		this.serviceType = serviceType;
 	}
 
 	protected ActionType actionType;
@@ -58,8 +36,6 @@ public abstract class AbstractService {
 
 	IAdapter adapter;
 
- 
-
 	public IResponse invoke(IRequest request) throws OrchestrationException {
 
 		try {
@@ -72,7 +48,7 @@ public abstract class AbstractService {
 			this.getAdapter().handleException(ex);
 
 		}
-		
+
 		return null;
 
 	}
@@ -80,17 +56,15 @@ public abstract class AbstractService {
 	public IAdapter getAdapter() throws OrchestrationException {
 
 		try {
-			if 
-			
-			   (this.adapter == null) {
-				this.setServiceType(activity.getSettings().getActivityContext().getServices().get(actionType.getService()));
-				
+			if
+
+			(this.adapter == null) {
 				AdapterConfigType adapterConfigType = activity.getSettings().getActivityContext().getAdapters()
-						.get(this.getServiceType().getAdapter());
+						.get(this.getConfig().getAdapter());
 
 				this.adapter = (IAdapter) ReflectionUtil.getInstance(adapterConfigType.getClazz());
 				this.adapter.setService((IService) this);
-				this.adapter.setAdapterConfigType(adapterConfigType);
+				this.adapter.setConfig(adapterConfigType);
 			}
 
 			return this.adapter;
