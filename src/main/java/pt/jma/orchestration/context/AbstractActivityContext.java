@@ -21,12 +21,12 @@ import pt.jma.orchestration.context.config.ServiceType;
 import pt.jma.orchestration.exception.InvalidStartException;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.result.config.ResultType;
+import pt.jma.orchestration.util.AbstractConfigurableInheritedElement;
 
-public abstract class AbstractActivityContext implements IActivityContext {
+public abstract class AbstractActivityContext extends AbstractConfigurableInheritedElement<ContextType> implements IActivityContext {
 
 	public Map<String, IActivitySettings> mapActivitySettings = new HashMap<String, IActivitySettings>();
 
-	Map<String, String> properties = new HashMap<String, String>();
 	Map<String, ConverterType> converters = new HashMap<String, ConverterType>();
 	Map<String, ServiceType> services = new HashMap<String, ServiceType>();
 	Map<String, AdapterConfigType> adapters = new HashMap<String, AdapterConfigType>();
@@ -34,10 +34,6 @@ public abstract class AbstractActivityContext implements IActivityContext {
 
 	public Map<String, Map<String, ResultType>> getResults() {
 		return results;
-	}
-
-	public Map<String, String> getProperties() {
-		return properties;
 	}
 
 	public AbstractActivityContext() throws Exception {
@@ -59,7 +55,8 @@ public abstract class AbstractActivityContext implements IActivityContext {
 			if (contextType.getParent() != null)
 				this.loadContextType(this.getParentContextConfig(contextType));
 
-			CollectionUtil.map(contextType.getProperties(), new PutPropertyProcessor(this));
+			this.getConfigList().add(contextType);
+
 			CollectionUtil.map(contextType.getAdaptersConfig(), new PutAdapterProcessor(this));
 			CollectionUtil.map(contextType.getServices(), new PutServiceProcessor(this));
 			CollectionUtil.map(contextType.getResults(), new PutResultProcessor(this.getResults()));
@@ -78,6 +75,8 @@ public abstract class AbstractActivityContext implements IActivityContext {
 		if (activityType.getParent() != null) {
 			loadActivityType(activitySettings, activityType.getParent());
 		}
+		
+		activitySettings.getConfigList().add(activityType);
 
 		if (activityType.getBinds() != null) {
 			CollectionUtil.map(activityType.getBinds().getInputBind(), new AddBindProcessor(activitySettings.getInputBinds()));

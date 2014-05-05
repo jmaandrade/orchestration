@@ -3,14 +3,15 @@ package pt.jma.orchestration.activity;
 import java.util.List;
 import java.util.Map;
 
-import pt.jma.common.IMapUtil;
 import pt.jma.orchestration.activity.config.ActionType;
+import pt.jma.orchestration.activity.config.ActivityType;
 import pt.jma.orchestration.activity.config.BindType;
 import pt.jma.orchestration.activity.config.EventType;
 import pt.jma.orchestration.context.IActivityContext;
 import pt.jma.orchestration.result.config.ResultType;
+import pt.jma.orchestration.util.IConfigurableInheritedElement;
 
-public interface IActivitySettings {
+public interface IActivitySettings extends IConfigurableInheritedElement<ActivityType> {
 
 	String getStartActivityEvent();
 
@@ -29,8 +30,6 @@ public interface IActivitySettings {
 	void setStart(String start);
 
 	Map<String, ActionType> getActionMap();
-
-	IMapUtil getProperties();
 
 	Map<String, Map<String, ResultType>> getResultsMap();
 

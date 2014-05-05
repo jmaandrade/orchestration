@@ -61,8 +61,8 @@ public class XMLActivityContext extends AbstractActivityContext implements IActi
 		this.setURI(uri);
 		this.loadContextType(this.getContextConfig());
 
-		this.activityNameMask = super.properties.get("activity-name-mask");
-		this.activityPath = super.properties.get("activity-uri");
+		this.activityNameMask = (String) this.getProperties().get("activity-name-mask");
+		this.activityPath =  (String) this.getProperties().get("activity-uri");
 	}
 
 }

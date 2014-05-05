@@ -5,15 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pt.jma.common.IMapUtil;
-import pt.jma.common.MapUtil;
 import pt.jma.orchestration.activity.config.ActionType;
+import pt.jma.orchestration.activity.config.ActivityType;
 import pt.jma.orchestration.activity.config.BindType;
 import pt.jma.orchestration.activity.config.EventType;
 import pt.jma.orchestration.context.IActivityContext;
 import pt.jma.orchestration.result.config.ResultType;
+import pt.jma.orchestration.util.AbstractConfigurableInheritedElement;
 
-public class ActivitySettings implements IActivitySettings {
+public class ActivitySettings extends AbstractConfigurableInheritedElement<ActivityType> implements IActivitySettings {
 
 	String startActivityEvent = null;
 
@@ -44,8 +44,6 @@ public class ActivitySettings implements IActivitySettings {
 	}
 
 	String name;
-
-	IMapUtil properties = new MapUtil();
 
 	Map<String, Map<String, ResultType>> results = new HashMap<String, Map<String, ResultType>>();
 
@@ -81,10 +79,6 @@ public class ActivitySettings implements IActivitySettings {
 
 	public Map<String, ActionType> getActionMap() {
 		return actionMap;
-	}
-
-	public IMapUtil getProperties() {
-		return properties;
 	}
 
 	public String getStartActivityEvent() {

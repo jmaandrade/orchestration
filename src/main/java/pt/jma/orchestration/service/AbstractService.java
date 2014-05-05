@@ -10,9 +10,8 @@ import pt.jma.orchestration.context.config.AdapterConfigType;
 import pt.jma.orchestration.context.config.ServiceType;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.util.AbstractConfigurableElement;
-import pt.jma.orchestration.util.IConfigurableElement;
 
-public abstract class AbstractService extends AbstractConfigurableElement<ServiceType> implements IConfigurableElement<ServiceType> {
+public abstract class AbstractService extends AbstractConfigurableElement<ServiceType> implements IService {
 
 	IActivity activity;
 
