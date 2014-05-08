@@ -2,6 +2,7 @@ package pt.jma.orchestration.activity;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
 import java.util.UUID;
 
 import pt.jma.common.IMapUtil;
@@ -10,18 +11,17 @@ import pt.jma.common.ReflectionUtil;
 import pt.jma.common.atomic.IAtomicMapUtil;
 import pt.jma.common.collection.CollectionUtil;
 import pt.jma.common.collection.IMapProcessor;
+import pt.jma.orchestration.activity.AbstractActivityObserver.ObserverTypeEnum;
 import pt.jma.orchestration.activity.config.ActionType;
-import pt.jma.orchestration.activity.config.ActivityType;
 import pt.jma.orchestration.activity.config.BindType;
 import pt.jma.orchestration.activity.config.EventType;
 import pt.jma.orchestration.context.config.ConverterType;
 import pt.jma.orchestration.converters.IConverter;
 import pt.jma.orchestration.exception.EventNotFoundException;
 import pt.jma.orchestration.service.IService;
-import pt.jma.orchestration.util.AbstractConfigurableElement;
 import pt.jma.orchestration.util.IConfigurableElement;
 
-public abstract class AbstractActivity {
+public abstract class AbstractActivity extends Observable {
 
 	protected Map<String, IAtomicMapUtil> scope = new HashMap<String, IAtomicMapUtil>();
 
@@ -139,6 +139,8 @@ public abstract class AbstractActivity {
 
 	protected void triggerEvent(EventType event) throws Throwable {
 		CollectionUtil.map(event.getBindsAndStates(), this.getActivityEventProcessor());
+		setChanged();
+		notifyObservers(new ObserverUpdateArg<String>(ObserverTypeEnum.EVENT, event.getName()));
 	}
 
 	public UUID getUUID() {
@@ -166,6 +168,10 @@ public abstract class AbstractActivity {
 			return serviceCache.get(name);
 		}
 
+	}
+
+	public void addEventObserver(IEventActivityObserver userObserver) {
+		this.addObserver(new EventActivityObserver(userObserver, this));
 	}
 
 	abstract IService getServiceInstance() throws Throwable;

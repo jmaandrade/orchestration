@@ -7,6 +7,7 @@ import java.net.URI;
 import org.junit.Test;
 
 import pt.jma.orchestration.activity.IActivity;
+import pt.jma.orchestration.activity.IEventActivityObserver;
 import pt.jma.orchestration.activity.IRequest;
 import pt.jma.orchestration.activity.IResponse;
 import pt.jma.orchestration.activity.Request;
@@ -20,6 +21,15 @@ public class TestHelloWord {
 		try {
 			IActivityContext context = new XMLActivityContext(new URI("src/test/resources/context.xml"));
 			IActivity activity = context.lookup("teste");
+
+			activity.addEventObserver(new IEventActivityObserver() {
+
+				public void update(String event) {
+					System.out.printf(String.format("Event %s fired!!\n", event));
+				}
+
+			});
+
 			IRequest request = new Request();
 			request.put("name", "jma1");
 			IResponse response = activity.invoke(request);

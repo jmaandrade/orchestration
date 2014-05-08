@@ -18,4 +18,6 @@ public interface IActivity {
 
 	IActivitySettings getSettings() throws Exception;
 
+	void addEventObserver(IEventActivityObserver observer);
+
 }
