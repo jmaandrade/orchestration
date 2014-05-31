@@ -1,5 +1,6 @@
 package pt.jma.orchestration.context;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import pt.jma.orchestration.context.config.AdapterConfigType;
 import pt.jma.orchestration.context.config.ContextType;
 import pt.jma.orchestration.context.config.ConverterType;
 import pt.jma.orchestration.context.config.ServiceType;
+import pt.jma.orchestration.converters.IConverter;
 import pt.jma.orchestration.exception.InvalidStartException;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.result.config.ResultType;
@@ -75,7 +77,7 @@ public abstract class AbstractActivityContext extends AbstractConfigurableInheri
 		if (activityType.getParent() != null) {
 			loadActivityType(activitySettings, activityType.getParent());
 		}
-		
+
 		activitySettings.getConfigList().add(activityType);
 
 		if (activityType.getBinds() != null) {
@@ -164,4 +166,22 @@ public abstract class AbstractActivityContext extends AbstractConfigurableInheri
 		return state;
 	}
 
+	static Map<String, IConverter> convertersMap = new HashMap<String, IConverter>();
+
+	abstract IConverter<Serializable> getNewConverterInstance(ConverterType converterType) throws Exception;
+
+	public IConverter<Serializable> getConverter(String name) throws Exception {
+
+		synchronized (convertersMap) {
+
+			if (!convertersMap.containsKey(name)) {
+
+				ConverterType converterType = this.getConverters().get(name);
+
+				convertersMap.put(name, this.getNewConverterInstance(converterType));
+			}
+		}
+
+		return convertersMap.get(name);
+	}
 }

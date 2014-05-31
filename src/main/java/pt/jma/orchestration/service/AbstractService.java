@@ -1,6 +1,5 @@
 package pt.jma.orchestration.service;
 
-import pt.jma.common.ReflectionUtil;
 import pt.jma.orchestration.activity.IActivity;
 import pt.jma.orchestration.activity.IRequest;
 import pt.jma.orchestration.activity.IResponse;
@@ -52,18 +51,13 @@ public abstract class AbstractService extends AbstractConfigurableElement<Servic
 
 	}
 
+	abstract public IAdapter getNewAdapterInstance() throws Throwable;
+
 	public IAdapter getAdapter() throws OrchestrationException {
 
 		try {
-			if
-
-			(this.adapter == null) {
-				AdapterConfigType adapterConfigType = activity.getSettings().getActivityContext().getAdapters()
-						.get(this.getConfig().getAdapter());
-
-				this.adapter = (IAdapter) ReflectionUtil.getInstance(adapterConfigType.getClazz());
-				this.adapter.setService((IService) this);
-				this.adapter.setConfig(adapterConfigType);
+			if (this.adapter == null) {
+				this.adapter = this.getNewAdapterInstance();
 			}
 
 			return this.adapter;

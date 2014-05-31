@@ -51,9 +51,8 @@ public class BindProcessor implements IMapProcessor<BindType> {
 		if (mapFrom.containsKey(bindType.getFrom())) {
 
 			Serializable value = (Serializable) mapFrom.get(bindType.getFrom());
-
-			IConverter converter = (bindType.getConverter() != null ? ActivityImpl.getConverter(this.activity.getSettings(), bindType)
-					: null);
+			
+			IConverter converter = (bindType.getConverter() != null ? this.activity.getSettings().getActivityContext().getConverter(bindType.getConverter()) : null);
 
 			this.activity.getScope().get(scopeTo).swapEntry(new BindFn(bindType.getTo(), value, converter));
 

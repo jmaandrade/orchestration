@@ -1,6 +1,5 @@
 package pt.jma.orchestration.adapter;
 
-import pt.jma.common.ReflectionUtil;
 import pt.jma.orchestration.activity.IRequest;
 import pt.jma.orchestration.activity.IResponse;
 import pt.jma.orchestration.activity.action.IAction;
@@ -23,11 +22,7 @@ public abstract class AbstractAdapter extends AbstractConfigurableElement<Adapte
 		this.service = service;
 	}
 
-	public IAction getNewActionInstance() throws Throwable {
-
-		return (IAction) ReflectionUtil.getInstance(this.getService().getActionType().getTarget().getClazz());
-
-	}
+	abstract public IAction getNewActionInstance() throws Throwable;
 
 	public void beforeInvoke(IRequest request) {
 	}

@@ -1,16 +1,18 @@
 package pt.jma.orchestration.context;
 
+import java.io.Serializable;
 import java.net.URI;
 
+import pt.jma.common.ReflectionUtil;
 import pt.jma.common.xml.SerializationUtils;
 import pt.jma.orchestration.activity.ActivityImpl;
 import pt.jma.orchestration.activity.IActivity;
 import pt.jma.orchestration.activity.IActivitySettings;
-import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.activity.config.ActivityType;
 import pt.jma.orchestration.context.config.ContextType;
-import pt.jma.orchestration.service.IService;
-import pt.jma.orchestration.service.ServiceImpl;
+import pt.jma.orchestration.context.config.ConverterType;
+import pt.jma.orchestration.converters.IConverter;
+import pt.jma.orchestration.util.IConfigurableElement;
 
 public class XMLActivityContext extends AbstractActivityContext implements IActivityContext {
 
@@ -62,7 +64,16 @@ public class XMLActivityContext extends AbstractActivityContext implements IActi
 		this.loadContextType(this.getContextConfig());
 
 		this.activityNameMask = (String) this.getProperties().get("activity-name-mask");
-		this.activityPath =  (String) this.getProperties().get("activity-uri");
+		this.activityPath = (String) this.getProperties().get("activity-uri");
+	}
+
+	IConverter<Serializable> getNewConverterInstance(ConverterType converterType) throws Exception {
+
+		Object converter = ReflectionUtil.getInstance(converterType.getClazz());
+
+		IConfigurableElement<ConverterType> configurableElement = (IConfigurableElement<ConverterType>) converter;
+		configurableElement.setConfig(converterType);
+		return (IConverter<Serializable>) configurableElement;
 	}
 
 }
