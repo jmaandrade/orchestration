@@ -3,6 +3,7 @@ package pt.jma.orchestration.adapter;
 import pt.jma.orchestration.activity.IRequest;
 import pt.jma.orchestration.activity.IResponse;
 import pt.jma.orchestration.activity.action.IAction;
+import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.context.config.AdapterConfigType;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.service.IService;
@@ -22,7 +23,7 @@ public abstract class AbstractAdapter extends AbstractConfigurableElement<Adapte
 		this.service = service;
 	}
 
-	abstract public IAction getNewActionInstance() throws Throwable;
+	abstract public IAction getNewActionInstance(ActionType actionType) throws Throwable;
 
 	public void beforeInvoke(IRequest request) {
 	}
@@ -44,7 +45,7 @@ public abstract class AbstractAdapter extends AbstractConfigurableElement<Adapte
 
 		try {
 
-			action = this.getNewActionInstance();
+			action = this.getNewActionInstance(this.getService().getActionType());
 			action.setAdapter((IAdapter) this);
 			action.beforeInvoke(request);
 			IResponse response = action.invoke(request);

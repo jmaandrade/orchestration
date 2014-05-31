@@ -7,9 +7,8 @@ import pt.jma.orchestration.context.config.AdapterConfigType;
 public class ServiceImpl extends AbstractService implements IService {
 
 	@Override
-	public IAdapter getNewAdapterInstance() throws Throwable {
+	public IAdapter getNewAdapterInstance(AdapterConfigType adapterConfigType) throws Throwable {
 		
-		AdapterConfigType adapterConfigType = super.getActivity().getSettings().getActivityContext().getAdapters().get(this.getConfig().getAdapter());
 		IAdapter instance = (IAdapter) ReflectionUtil.getInstance(adapterConfigType.getClazz());
 		instance.setService((IService) this);
 		instance.setConfig(adapterConfigType);

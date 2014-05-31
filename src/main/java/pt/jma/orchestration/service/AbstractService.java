@@ -51,13 +51,15 @@ public abstract class AbstractService extends AbstractConfigurableElement<Servic
 
 	}
 
-	abstract public IAdapter getNewAdapterInstance() throws Throwable;
+	abstract public IAdapter getNewAdapterInstance(AdapterConfigType adapterConfigType) throws Throwable;
 
 	public IAdapter getAdapter() throws OrchestrationException {
 
 		try {
 			if (this.adapter == null) {
-				this.adapter = this.getNewAdapterInstance();
+				AdapterConfigType adapterConfigType = this.getActivity().getSettings().getActivityContext().getAdapters()
+						.get(this.getConfig().getAdapter());
+				this.adapter = this.getNewAdapterInstance(adapterConfigType);
 			}
 
 			return this.adapter;
