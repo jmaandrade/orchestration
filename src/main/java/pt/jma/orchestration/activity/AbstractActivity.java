@@ -23,7 +23,6 @@ import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.exception.OutcomeNotFoundException;
 import pt.jma.orchestration.result.config.ResultType;
 import pt.jma.orchestration.service.IService;
-import pt.jma.orchestration.service.IServiceInvocation;
 import pt.jma.orchestration.util.thread.IThreadActivityCaller;
 import pt.jma.orchestration.util.thread.ThreadActivity;
 
@@ -134,9 +133,31 @@ public abstract class AbstractActivity extends Observable {
 		return uUID;
 	}
 
+	Map<String, IService> serviceCache = new HashMap<String, IService>();
+
+	protected IService getService(ActionType actionType) throws Throwable {
+
+		String name = actionType.getService();
+
+		synchronized (serviceCache) {
+			if (!serviceCache.containsKey(name)) {
+				IService service = this.getServiceInstance();
+				service.setConfig(this.getSettings().getActivityContext().getServices().get(actionType.getService()));
+				service.setActionType(actionType);
+				service.setActivity((IActivity) this);
+				serviceCache.put(name, (IService) service);
+
+			}
+			return serviceCache.get(name);
+		}
+
+	}
+
 	public void addEventObserver(IEventActivityObserver userObserver) {
 		this.addObserver(new EventActivityObserver(userObserver, this));
 	}
+
+	abstract IService getServiceInstance() throws Throwable;
 
 	public IResponse invoke(IRequest request) throws Throwable {
 
@@ -194,11 +215,7 @@ public abstract class AbstractActivity extends Observable {
 				CollectionUtil.map(actionType.getBinds().getInputBind(), this.getInputBindProcessor());
 				this.triggerAutomaticEvent("on-action-invoke");
 
-				IService service = this.settings.getActivityContext().getService(actionType.getService());
-				IServiceInvocation invocation = service.getNewInvocationInstance(actionType);
-				invocation.setActivity((IActivity) this);
-				IResponse responseService = invocation.invoke(serviceRequest);
-				
+				IResponse responseService = this.getService(actionType).invoke(serviceRequest);
 				response.setOutcome(responseService.getOutcome());
 
 				scope.put("output-action-message", new PessimisticMapUtilLocking(responseService));
@@ -293,16 +310,11 @@ public abstract class AbstractActivity extends Observable {
 
 	public ThreadActivity invokeAsynchr(IRequest request) throws Throwable {
 
-		return this.invokeAsynchr(request, new IThreadActivityCaller() {
+		ThreadActivity instance = new ThreadActivity((IActivity) this, request, new IThreadActivityCaller() {
 			public boolean notifyThreadEnd() {
 				return true;
 			}
 		});
-	}
-
-	public ThreadActivity invokeAsynchr(IRequest request, IThreadActivityCaller caller) throws Throwable {
-
-		ThreadActivity instance = new ThreadActivity((IActivity) this, request, caller);
 		instance.start();
 		return instance;
 	}

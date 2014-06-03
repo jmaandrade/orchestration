@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import pt.jma.common.atomic.IAtomicMapUtil;
-import pt.jma.orchestration.util.thread.IThreadActivityCaller;
 import pt.jma.orchestration.util.thread.ThreadActivity;
 
 public interface IActivity {
@@ -17,11 +16,7 @@ public interface IActivity {
 
 	ThreadActivity invokeAsynchr(IRequest request) throws Throwable;
 
-	ThreadActivity invokeAsynchr(IRequest request, IThreadActivityCaller caller) throws Throwable;
-
 	IActivitySettings getSettings() throws Exception;
-	
-	void setSettings(IActivitySettings settings) throws Exception;
 
 	void addEventObserver(IEventActivityObserver observer);
 
