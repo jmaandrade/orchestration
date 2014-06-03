@@ -1,10 +1,8 @@
 package pt.jma.orchestration.service;
 
-import pt.jma.orchestration.activity.IActivity;
-import pt.jma.orchestration.activity.IRequest;
-import pt.jma.orchestration.activity.IResponse;
 import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.adapter.IAdapter;
+import pt.jma.orchestration.context.IActivityContext;
 import pt.jma.orchestration.context.config.AdapterConfigType;
 import pt.jma.orchestration.context.config.ServiceType;
 import pt.jma.orchestration.exception.OrchestrationException;
@@ -12,53 +10,36 @@ import pt.jma.orchestration.util.AbstractConfigurableElement;
 
 public abstract class AbstractService extends AbstractConfigurableElement<ServiceType> implements IService {
 
-	IActivity activity;
+	IActivityContext context;
 
-	public IActivity getActivity() {
-		return activity;
+	public IActivityContext getContext() {
+		return context;
 	}
 
-	public void setActivity(IActivity activity) {
-		this.activity = activity;
+	public void setContext(IActivityContext context) {
+		this.context = context;
 	}
 
-	protected ActionType actionType;
-
-	public ActionType getActionType() {
-		return actionType;
+	public void setAdapter(IAdapter adapter) {
+		this.adapter = adapter;
 	}
 
-	public void setActionType(ActionType actionType) {
-		this.actionType = actionType;
+	public AbstractService(IActivityContext context) {
+		super();
+		this.context = context;
 	}
 
 	IAdapter adapter;
 
-	public IResponse invoke(IRequest request) throws OrchestrationException {
-
-		try {
-			this.getAdapter().beforeInvoke(request);
-			IResponse response = this.getAdapter().invoke(request);
-			this.getAdapter().afterInvoke(response);
-			return response;
-
-		} catch (Throwable ex) {
-			this.getAdapter().handleException(ex);
-
-		}
-
-		return null;
-
-	}
-
 	abstract public IAdapter getNewAdapterInstance(AdapterConfigType adapterConfigType) throws Throwable;
+
+	abstract public IServiceInvocation getNewInvocationInstance(ActionType actionType) throws Throwable;
 
 	public IAdapter getAdapter() throws OrchestrationException {
 
 		try {
 			if (this.adapter == null) {
-				AdapterConfigType adapterConfigType = this.getActivity().getSettings().getActivityContext().getAdapters()
-						.get(this.getConfig().getAdapter());
+				AdapterConfigType adapterConfigType = this.context.getAdapters().get(this.getConfig().getAdapter());
 				this.adapter = this.getNewAdapterInstance(adapterConfigType);
 			}
 

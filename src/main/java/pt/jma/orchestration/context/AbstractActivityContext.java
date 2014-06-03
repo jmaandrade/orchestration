@@ -23,6 +23,7 @@ import pt.jma.orchestration.converters.IConverter;
 import pt.jma.orchestration.exception.InvalidStartException;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.result.config.ResultType;
+import pt.jma.orchestration.service.IService;
 import pt.jma.orchestration.util.AbstractConfigurableInheritedElement;
 
 public abstract class AbstractActivityContext extends AbstractConfigurableInheritedElement<ContextType> implements IActivityContext {
@@ -39,6 +40,23 @@ public abstract class AbstractActivityContext extends AbstractConfigurableInheri
 	}
 
 	public AbstractActivityContext() throws Exception {
+
+	}
+
+	abstract IService getServiceInstance(ServiceType serviceType) throws Throwable;
+
+	Map<String, IService> serviceCache = new HashMap<String, IService>();
+
+	public IService getService(String name) throws Throwable {
+
+		synchronized (serviceCache) {
+			if (!serviceCache.containsKey(name)) {
+				IService service = this.getServiceInstance(this.getServices().get(name));
+				serviceCache.put(name, (IService) service);
+
+			}
+			return serviceCache.get(name);
+		}
 
 	}
 
