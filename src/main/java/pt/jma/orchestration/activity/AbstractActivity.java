@@ -20,7 +20,7 @@ import pt.jma.orchestration.exception.ActionNotFoundException;
 import pt.jma.orchestration.exception.EventNotFoundException;
 import pt.jma.orchestration.exception.ExceptionResultDetectionProcessor;
 import pt.jma.orchestration.exception.OrchestrationException;
-import pt.jma.orchestration.exception.OutcomeNotFoundException;
+import pt.jma.orchestration.result.IResultFn;
 import pt.jma.orchestration.result.config.ResultType;
 import pt.jma.orchestration.service.IService;
 import pt.jma.orchestration.service.IServiceInvocation;
@@ -134,8 +134,46 @@ public abstract class AbstractActivity extends Observable {
 		return uUID;
 	}
 
+	Map<String, IResultFn> targetResultFnMap = new HashMap<String, IResultFn>();
+
+	public Map<String, IResultFn> getTargetResultFnMap() {
+		return targetResultFnMap;
+	}
+
 	public void addEventObserver(IEventActivityObserver userObserver) {
 		this.addObserver(new EventActivityObserver(userObserver, this));
+	}
+
+	private ActionResult invoke(ActionType actionType, IRequest request, IResponse response) throws OrchestrationException {
+
+		ActionResult result = new ActionResult();
+		try {
+			scope.put("input-action-message", new PessimisticMapUtilLocking(request));
+			scope.put("input-action-message-context", new PessimisticMapUtilLocking(request.getContext()));
+
+			CollectionUtil.map(actionType.getBinds().getInputBind(), this.getInputBindProcessor());
+			this.triggerAutomaticEvent("on-action-invoke");
+
+			IService service = this.settings.getActivityContext().getService(actionType.getService());
+			IServiceInvocation invocation = service.getNewInvocationInstance(actionType);
+			invocation.setActivity((IActivity) this);
+			IResponse responseService = invocation.invoke(request);
+
+			response.setOutcome(responseService.getOutcome());
+
+			scope.put("output-action-message", new PessimisticMapUtilLocking(responseService));
+			scope.put("output-action-message-context", new PessimisticMapUtilLocking(responseService.getContext()));
+
+			CollectionUtil.map(actionType.getBinds().getOutputBind(), this.getOutputBindProcessor());
+
+		} catch (OrchestrationException ex) {
+			throw ex;
+		} catch (Throwable ex) {
+			result.setError(ex);
+		}
+
+		return result;
+
 	}
 
 	public IResponse invoke(IRequest request) throws Throwable {
@@ -172,119 +210,78 @@ public abstract class AbstractActivity extends Observable {
 
 		String nextAction = request.getStartAction().isEmpty() ? this.settings.getStart() : request.getStartAction();
 
+		ActionResult actionResult = null;
+
 		while (true) {
 
-			try {
+			if (this.settings.getActionMap().containsKey(nextAction) == false)
+				throw new ActionNotFoundException(nextAction);
 
-				if (this.settings.getActionMap().containsKey(nextAction) == false)
-					throw new ActionNotFoundException(nextAction);
+			ActionType actionType = this.settings.getActionMap().get(nextAction);
 
-				ActionType actionType = this.settings.getActionMap().get(nextAction);
+			response.getContext().put("last-action", actionType.getName());
 
-				response.getContext().put("last-action", actionType.getName());
+			if (actionType.getEvent() != null)
+				this.triggerUserEvent(actionType.getEvent());
 
-				if (actionType.getEvent() != null)
-					this.triggerUserEvent(actionType.getEvent());
+			IRequest serviceRequest = new Request();
 
-				IRequest serviceRequest = new Request();
+			actionResult = this.invoke(actionType, serviceRequest, response);
 
-				scope.put("input-action-message", new PessimisticMapUtilLocking(serviceRequest));
-				scope.put("input-action-message-context", new PessimisticMapUtilLocking(serviceRequest.getContext()));
+			nextAction = "";
+			ForwardType forwardType = null;
 
-				CollectionUtil.map(actionType.getBinds().getInputBind(), this.getInputBindProcessor());
-				this.triggerAutomaticEvent("on-action-invoke");
+			if (actionType.getForwards().size() == 0) {
 
-				IService service = this.settings.getActivityContext().getService(actionType.getService());
-				IServiceInvocation invocation = service.getNewInvocationInstance(actionType);
-				invocation.setActivity((IActivity) this);
-				IResponse responseService = invocation.invoke(serviceRequest);
-				
-				response.setOutcome(responseService.getOutcome());
+			} else if (actionType.getForwards().size() == 1 && actionType.getForwardMap().containsKey(null)) {
+				forwardType = actionType.getForwardMap().get(null);
+			} else if (actionType.getForwardMap().containsKey(actionResult.getOutcome())) {
+				forwardType = actionType.getForwardMap().get(actionResult.getOutcome());
+			}
 
-				scope.put("output-action-message", new PessimisticMapUtilLocking(responseService));
-				scope.put("output-action-message-context", new PessimisticMapUtilLocking(responseService.getContext()));
+			if (forwardType != null) {
+				nextAction = forwardType.getAction();
+				this.triggerAutomaticEvent("on-forward");
+				this.triggerUserEvent(forwardType.getEvent());
+			}
 
-				CollectionUtil.map(actionType.getBinds().getOutputBind(), this.getOutputBindProcessor());
+			if (nextAction.isEmpty())
+				break;
+		}
 
-				nextAction = "";
-				ForwardType forwardType = null;
+		ResultType resultType = null;
 
-				if (actionType.getForwards().size() == 0) {
+		if (actionResult.getError() != null) {
 
-				} else if (actionType.getForwards().size() == 1) {
+			if (this.getSettings().getResultsMap().containsKey("exception")) {
 
-					if (actionType.getForwardMap().containsKey(responseService.getOutcome()) == false) {
-						if (actionType.getForwardMap().containsKey(null) == false) {
-							throw new OutcomeNotFoundException(responseService.getOutcome());
-						}
-						forwardType = actionType.getForwardMap().get(null);
-					} else
-						forwardType = actionType.getForwardMap().get(responseService.getOutcome());
+				resultType = CollectionUtil.first(this.getSettings().getResultsMap().get("exception").keySet(),
+						new ExceptionResultDetectionProcessor((IActivity) this, actionResult.getError()));
 
-				} else if (actionType.getForwardMap().containsKey(responseService.getOutcome()) == false) {
-					throw new OutcomeNotFoundException(responseService.getOutcome());
-				} else {
-					forwardType = actionType.getForwardMap().get(responseService.getOutcome());
+				if (resultType == null) {
+					throw actionResult.getError().getCause() == null ? actionResult.getError() : actionResult.getError().getCause();
+				}
+			}
+
+		} else {
+
+			if (this.getSettings().getResultsMap().containsKey("outcome")) {
+				if (this.getSettings().getResultsMap().get("outcome").containsKey(actionResult.getOutcome())) {
+					resultType = this.getSettings().getResultsMap().get("outcome").get(actionResult.getOutcome());
 				}
 
-				if (forwardType != null) {
-					nextAction = forwardType.getAction();
-					this.triggerAutomaticEvent("on-forward");
-				}
-				if (nextAction.isEmpty()) {
-					if (this.settings.getResultsMap().containsKey("outcome")) {
-						if (this.settings.getResultsMap().get("outcome").containsKey(responseService.getOutcome())) {
-
-							ResultType result = this.settings.getResultsMap().get("outcome").get(responseService.getOutcome());
-
-							CollectionUtil.map(result.getBinds(), this.getOutputBindProcessor());
-
-							if (result.getTargetType() != null && result.getTargetType().equalsIgnoreCase("action")) {
-
-								nextAction = result.getTargetName();
-								this.triggerAutomaticEvent("on-result");
-							}
-
-							this.triggerUserEvent(result.getEvent());
-						}
-					}
-
-				}
-
-				if (forwardType != null)
-					this.triggerUserEvent(forwardType.getEvent());
-
-				if (nextAction.isEmpty())
-					break;
-
-			} catch (OrchestrationException ex) {
-				throw ex;
-			} catch (Throwable ex) {
-				ResultType result = null;
-
-				if (this.getSettings().getResultsMap().containsKey("exception")) {
-
-					result = CollectionUtil.first(this.getSettings().getResultsMap().get("exception").keySet(),
-							new ExceptionResultDetectionProcessor((IActivity) this, ex));
-
-					if (result != null) {
-						this.triggerAutomaticEvent("on-result");
-
-						CollectionUtil.map(result.getBinds(), this.getOutputBindProcessor());
-
-						nextAction = (result.getTargetName() != null ? result.getTargetName() : "");
-						this.triggerUserEvent(result.getEvent());
-					}
-
-				}
-
-				if (result == null)
-					throw ex.getCause() == null ? ex : ex.getCause();
-
-				if (nextAction.isEmpty())
-					break;
 			}
 		}
+
+		if (resultType != null) {
+			CollectionUtil.map(resultType.getBinds(), this.getOutputBindProcessor());
+			this.triggerAutomaticEvent("on-result");
+			this.triggerUserEvent(resultType.getEvent());
+
+			if (this.getTargetResultFnMap().containsKey(resultType.getTargetType()))
+				this.getTargetResultFnMap().get(resultType.getTargetType()).execute(resultType, request, response);
+		}
+
 		this.triggerAutomaticEvent("on-activity-end");
 		CollectionUtil.map(this.getSettings().getOutputBinds(), this.getOutputBindProcessor());
 		return response;
