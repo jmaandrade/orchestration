@@ -20,7 +20,7 @@ import pt.jma.orchestration.util.IConfigurableElement;
 public class XMLActivityContext extends AbstractActivityContext implements IActivityContext {
 
 	public IActivity getNewActivityInstance(IActivitySettings settings) throws Exception {
-		IActivity activity =   new ActivityImpl();
+		IActivity activity = new ActivityImpl();
 		activity.setSettings(settings);
 		return activity;
 	}

@@ -33,11 +33,6 @@ public abstract class AbstractActivityContext extends AbstractConfigurableInheri
 	Map<String, ConverterType> converters = new HashMap<String, ConverterType>();
 	Map<String, ServiceType> services = new HashMap<String, ServiceType>();
 	Map<String, AdapterConfigType> adapters = new HashMap<String, AdapterConfigType>();
-	Map<String, Map<String, ResultType>> results = new HashMap<String, Map<String, ResultType>>();
-
-	public Map<String, Map<String, ResultType>> getResults() {
-		return results;
-	}
 
 	public AbstractActivityContext() throws Exception {
 
@@ -79,7 +74,6 @@ public abstract class AbstractActivityContext extends AbstractConfigurableInheri
 
 			CollectionUtil.map(contextType.getAdaptersConfig(), new PutAdapterProcessor(this));
 			CollectionUtil.map(contextType.getServices(), new PutServiceProcessor(this));
-			CollectionUtil.map(contextType.getResults(), new PutResultProcessor(this.getResults()));
 			CollectionUtil.map(contextType.getConvertersConfig(), new PutConverterProcessor(this));
 
 		} catch (Throwable ex) {
@@ -114,6 +108,7 @@ public abstract class AbstractActivityContext extends AbstractConfigurableInheri
 			activitySettings.setStartActivityEvent(activityType.getActions().getEvent());
 		}
 		CollectionUtil.map(activityType.getActions().getActionlist(), new PutActionProcessor(activitySettings));
+		CollectionUtil.map(this.getContextConfig().getResults(), new PutResultProcessor(activitySettings.getResultsMap()));
 		CollectionUtil.map(activityType.getResults(), new PutResultProcessor(activitySettings.getResultsMap()));
 
 	}

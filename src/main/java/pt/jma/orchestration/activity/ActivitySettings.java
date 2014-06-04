@@ -10,6 +10,7 @@ import pt.jma.orchestration.activity.config.ActivityType;
 import pt.jma.orchestration.activity.config.BindType;
 import pt.jma.orchestration.activity.config.EventType;
 import pt.jma.orchestration.context.IActivityContext;
+import pt.jma.orchestration.result.IResultFn;
 import pt.jma.orchestration.result.config.ResultType;
 import pt.jma.orchestration.util.AbstractConfigurableInheritedElement;
 
