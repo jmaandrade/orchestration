@@ -32,6 +32,6 @@ public interface IActivity {
 
 	Map<String, IResultFn> getTargetResultFnMap();
 
-	Serializable GetState(String key) throws Exception;
+	Serializable getState(String key) throws Exception;
 
 }

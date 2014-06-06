@@ -59,7 +59,7 @@ public class TestHelloWord {
 			activity = (IActivity) input.readObject();
 			input.close();
 
-			System.out.printf("test_1(), (from serialized activity) activity-state.age=%s \n\n", (String) activity.GetState("age"));
+			System.out.printf("test_1(), (from serialized activity) activity-state.age=%s \n\n", (String) activity.getState("age"));
 
 		} catch (Throwable ex) {
 			ex.printStackTrace();
