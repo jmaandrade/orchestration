@@ -1,10 +1,10 @@
 package pt.jma.orchestration.activity;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Observer;
 import java.util.UUID;
 
+import pt.jma.common.IMapUtil;
 import pt.jma.common.atomic.IAtomicMapUtil;
 import pt.jma.orchestration.result.IResultFn;
 import pt.jma.orchestration.util.thread.IThreadActivityCaller;
@@ -32,6 +32,6 @@ public interface IActivity {
 
 	Map<String, IResultFn> getTargetResultFnMap();
 
-	Serializable getState(String key) throws Exception;
+	IMapUtil getState() throws Exception;
 
 }

@@ -55,8 +55,8 @@ public abstract class AbstractActivity extends Observable implements Serializabl
 
 	IMapUtil state = new MapUtil();
 
-	public Serializable getState(String key) throws Exception {
-		return (state.containsKey(key) ? state.get(key) : null);
+	public IMapUtil getState() throws Exception {
+		return state;
 	}
 
 	protected static Map<String, String> inputScopesFrom = new HashMap<String, String>();

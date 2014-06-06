@@ -6,12 +6,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.URI;
 
 import org.junit.Test;
@@ -47,19 +45,17 @@ public class TestHelloWord {
 			System.out.printf("test_1() %s global-state.last-name=%s age=%s\n\n", response.get("sayHi"),
 					(String) context.getState().get("last-name"), response.get("age"));
 
-			OutputStream bufferOut = new BufferedOutputStream(new FileOutputStream("teste.ser"));
-			ObjectOutput output = new ObjectOutputStream(bufferOut);
+			ObjectOutput output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("teste.ser")));
 			output.writeObject(activity);
 			output.close();
-			
+
 			activity = null;
 
-			InputStream buffer = new BufferedInputStream(new FileInputStream("teste.ser"));
-			ObjectInput input = new ObjectInputStream(buffer);
+			ObjectInput input = new ObjectInputStream(new BufferedInputStream(new FileInputStream("teste.ser")));
 			activity = (IActivity) input.readObject();
 			input.close();
 
-			System.out.printf("test_1(), (from serialized activity) activity-state.age=%s \n\n", (String) activity.getState("age"));
+			System.out.printf("test_1(), (from serialized activity) activity-state.age=%s \n\n", (String) activity.getState().get("age"));
 
 		} catch (Throwable ex) {
 			ex.printStackTrace();
