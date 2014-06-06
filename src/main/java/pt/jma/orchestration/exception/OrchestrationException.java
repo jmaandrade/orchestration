@@ -1,6 +1,13 @@
 package pt.jma.orchestration.exception;
 
-public class OrchestrationException extends Exception {
+import java.io.Serializable;
+
+public class OrchestrationException extends Exception implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4943396665354120043L;
 
 	public OrchestrationException() {
 		super();
@@ -21,10 +28,5 @@ public class OrchestrationException extends Exception {
 		super(cause);
 
 	}
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 }

@@ -1,12 +1,19 @@
 package pt.jma.orchestration.service;
 
+import java.io.Serializable;
+
 import pt.jma.orchestration.activity.IActivity;
 import pt.jma.orchestration.activity.IRequest;
 import pt.jma.orchestration.activity.IResponse;
 import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.exception.OrchestrationException;
 
-public abstract class AbstractServiceInvocation {
+public abstract class AbstractServiceInvocation  implements Serializable  {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3123525710952054112L;
 
 	public AbstractServiceInvocation() {
 		// TODO Auto-generated constructor stub

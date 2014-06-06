@@ -1,9 +1,15 @@
 package pt.jma.orchestration.activity;
 
+import java.io.Serializable;
 import java.util.Observable;
 import java.util.Observer;
 
-public abstract class AbstractActivityObserver<T extends IActivityObserver> implements Observer {
+public abstract class AbstractActivityObserver<T extends IActivityObserver> implements Observer, Serializable  {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3549490420313734413L;
 
 	static public enum ObserverTypeEnum {
 		EVENT

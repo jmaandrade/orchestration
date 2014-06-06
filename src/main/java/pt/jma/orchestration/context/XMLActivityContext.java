@@ -17,7 +17,12 @@ import pt.jma.orchestration.service.IService;
 import pt.jma.orchestration.service.ServiceImpl;
 import pt.jma.orchestration.util.IConfigurableElement;
 
-public class XMLActivityContext extends AbstractActivityContext implements IActivityContext {
+public class XMLActivityContext extends AbstractActivityContext implements IActivityContext  , Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7728163140568683027L;
 
 	public IActivity getNewActivityInstance(IActivitySettings settings) throws Exception {
 		IActivity activity = new ActivityImpl();

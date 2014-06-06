@@ -1,5 +1,6 @@
 package pt.jma.orchestration.activity.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EventType {
+public class EventType  implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3632054556410765496L;
+	
 	@XmlAttribute(required = true)
 	protected String name;
 

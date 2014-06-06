@@ -1,5 +1,7 @@
 package pt.jma.orchestration.service;
 
+import java.io.Serializable;
+
 import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.adapter.IAdapter;
 import pt.jma.orchestration.context.IActivityContext;
@@ -8,8 +10,12 @@ import pt.jma.orchestration.context.config.ServiceType;
 import pt.jma.orchestration.exception.OrchestrationException;
 import pt.jma.orchestration.util.AbstractConfigurableElement;
 
-public abstract class AbstractService extends AbstractConfigurableElement<ServiceType> implements IService {
+public abstract class AbstractService extends AbstractConfigurableElement<ServiceType> implements IService, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1230003556447479008L;
 	IActivityContext context;
 
 	public IActivityContext getContext() {

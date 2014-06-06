@@ -1,10 +1,16 @@
 package pt.jma.orchestration.activity;
 
+import java.io.Serializable;
+
 import pt.jma.common.collection.IMapProcessor;
 import pt.jma.orchestration.activity.config.EventType;
 
-public class PutEventProcessor implements IMapProcessor<EventType> {
+public class PutEventProcessor implements IMapProcessor<EventType>, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9076567557760931931L;
 	IActivitySettings activitySettings;
 
 	public PutEventProcessor(IActivitySettings activitySettings) {

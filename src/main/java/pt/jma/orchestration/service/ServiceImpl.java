@@ -1,12 +1,19 @@
 package pt.jma.orchestration.service;
 
+import java.io.Serializable;
+
 import pt.jma.common.ReflectionUtil;
 import pt.jma.orchestration.activity.config.ActionType;
 import pt.jma.orchestration.adapter.IAdapter;
 import pt.jma.orchestration.context.IActivityContext;
 import pt.jma.orchestration.context.config.AdapterConfigType;
 
-public class ServiceImpl extends AbstractService implements IService {
+public class ServiceImpl extends AbstractService implements IService, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7924278660903622540L;
 
 	public ServiceImpl(IActivityContext context) {
 		super(context);

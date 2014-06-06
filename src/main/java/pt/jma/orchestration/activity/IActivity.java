@@ -1,5 +1,6 @@
 package pt.jma.orchestration.activity;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Observer;
 import java.util.UUID;
@@ -30,5 +31,7 @@ public interface IActivity {
 	void addObserver(Observer observer);
 
 	Map<String, IResultFn> getTargetResultFnMap();
+
+	Serializable GetState(String key) throws Exception;
 
 }

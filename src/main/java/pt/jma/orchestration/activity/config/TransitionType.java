@@ -7,6 +7,7 @@
 
 package pt.jma.orchestration.activity.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TransitionType {
+public class TransitionType  implements Serializable  {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2980067719101452563L;
 
 	@XmlAttribute(required = false)
 	protected String current;

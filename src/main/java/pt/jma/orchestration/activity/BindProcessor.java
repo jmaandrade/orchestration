@@ -9,8 +9,13 @@ import pt.jma.orchestration.activity.config.BindType;
 import pt.jma.orchestration.converters.IConverter;
 import pt.jma.orchestration.exception.InvalidScopeException;
 
-public class BindProcessor implements IMapProcessor<BindType> {
+public class BindProcessor implements IMapProcessor<BindType>  , Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2893715281812423190L;
+	
 	AbstractActivity activity;
 	Map<String, String> scopesFromMap;
 

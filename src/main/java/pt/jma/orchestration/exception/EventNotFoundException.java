@@ -1,6 +1,13 @@
 package pt.jma.orchestration.exception;
 
-public class EventNotFoundException extends OrchestrationException {
+import java.io.Serializable;
+
+public class EventNotFoundException extends OrchestrationException implements Serializable  {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2430619427543692898L;
 
 	public EventNotFoundException(String message, Throwable cause) {
 		super(message, cause);

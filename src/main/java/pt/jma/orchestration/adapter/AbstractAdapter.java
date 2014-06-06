@@ -1,5 +1,7 @@
 package pt.jma.orchestration.adapter;
 
+import java.io.Serializable;
+
 import pt.jma.orchestration.activity.IRequest;
 import pt.jma.orchestration.activity.IResponse;
 import pt.jma.orchestration.activity.action.IAction;
@@ -12,8 +14,13 @@ import pt.jma.orchestration.util.AbstractConfigurableElement;
 import pt.jma.orchestration.util.IConfigurableElement;
 
 public abstract class AbstractAdapter extends AbstractConfigurableElement<AdapterConfigType> implements
-		IConfigurableElement<AdapterConfigType> {
+		IConfigurableElement<AdapterConfigType>  , Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5011395639868528542L;
+	
 	IService service;
 
 	public IService getService() {

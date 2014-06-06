@@ -1,5 +1,6 @@
 package pt.jma.orchestration.activity;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,8 +10,13 @@ import pt.jma.common.collection.IMapProcessor;
 import pt.jma.orchestration.activity.config.StateType;
 import pt.jma.orchestration.activity.config.TransitionType;
 
-public class TransitionProcessor implements IMapProcessor<TransitionType> {
+public class TransitionProcessor implements IMapProcessor<TransitionType> , Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5234451852263741026L;
+	
 	StateType stateType;
 	AbstractActivity activity;
 

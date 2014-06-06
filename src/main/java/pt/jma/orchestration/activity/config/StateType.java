@@ -1,5 +1,6 @@
 package pt.jma.orchestration.activity.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +10,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StateType {
+public class StateType implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8329953568089223809L;
 	@XmlAttribute
 	protected String name;
 

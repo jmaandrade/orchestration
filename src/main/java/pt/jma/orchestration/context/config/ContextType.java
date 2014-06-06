@@ -7,6 +7,7 @@
 
 package pt.jma.orchestration.context.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +27,12 @@ import pt.jma.orchestration.util.IConfigProperties;
 @XmlRootElement(name = "context", namespace = "urn:pt.jma.orchestration.context")
 @XmlType(propOrder = { "properties", "convertersConfig", "adaptersConfig", "services",
 		"results" })
-public class ContextType  implements IConfigProperties {
+public class ContextType  implements IConfigProperties , Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1159863713789335662L;
 	@XmlAttribute
 	protected String parent;
 

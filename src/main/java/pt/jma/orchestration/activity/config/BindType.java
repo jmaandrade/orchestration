@@ -7,13 +7,20 @@
 
 package pt.jma.orchestration.activity.config;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BindType {
+public class BindType implements Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6797870191694848218L;
+	
 	@XmlAttribute(required = false)
 	protected String scopeFrom;
 	@XmlAttribute(required = false)

@@ -4,8 +4,13 @@ import java.io.Serializable;
 
 import pt.jma.orchestration.activity.AbstractActivityObserver.ObserverTypeEnum;
 
-public class ObserverUpdateArg<T extends Serializable> {
+public class ObserverUpdateArg<T extends Serializable>  implements Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4664744576013328705L;
+	
 	ObserverTypeEnum type;
 	T value;
 

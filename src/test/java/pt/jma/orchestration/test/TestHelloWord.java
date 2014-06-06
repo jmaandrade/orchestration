@@ -2,6 +2,16 @@ package pt.jma.orchestration.test;
 
 import static org.junit.Assert.fail;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.URI;
 
 import org.junit.Test;
@@ -36,6 +46,20 @@ public class TestHelloWord {
 
 			System.out.printf("test_1() %s global-state.last-name=%s age=%s\n\n", response.get("sayHi"),
 					(String) context.getState().get("last-name"), response.get("age"));
+
+			OutputStream bufferOut = new BufferedOutputStream(new FileOutputStream("teste.ser"));
+			ObjectOutput output = new ObjectOutputStream(bufferOut);
+			output.writeObject(activity);
+			output.close();
+			
+			activity = null;
+
+			InputStream buffer = new BufferedInputStream(new FileInputStream("teste.ser"));
+			ObjectInput input = new ObjectInputStream(buffer);
+			activity = (IActivity) input.readObject();
+			input.close();
+
+			System.out.printf("test_1(), (from serialized activity) activity-state.age=%s \n\n", (String) activity.GetState("age"));
 
 		} catch (Throwable ex) {
 			ex.printStackTrace();

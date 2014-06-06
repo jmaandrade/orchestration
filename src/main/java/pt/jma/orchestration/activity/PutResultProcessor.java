@@ -1,13 +1,19 @@
 package pt.jma.orchestration.activity;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 import pt.jma.common.collection.IMapProcessor;
 import pt.jma.orchestration.result.config.ResultType;
 
-public class PutResultProcessor implements IMapProcessor<ResultType> {
+public class PutResultProcessor implements IMapProcessor<ResultType>  , Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1008329270483226211L;
+	
 	Map<String, Map<String, ResultType>> results;
 
 	public PutResultProcessor(Map<String, Map<String, ResultType>> results) {

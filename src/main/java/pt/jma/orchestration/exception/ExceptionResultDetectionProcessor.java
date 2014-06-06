@@ -1,10 +1,16 @@
 package pt.jma.orchestration.exception;
 
+import java.io.Serializable;
+
 import pt.jma.common.collection.IReduceProcessor;
 import pt.jma.orchestration.activity.IActivity;
 import pt.jma.orchestration.result.config.ResultType;
 
-public class ExceptionResultDetectionProcessor implements IReduceProcessor<String, ResultType> {
+public class ExceptionResultDetectionProcessor implements IReduceProcessor<String, ResultType> , Serializable  {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5076053311895934182L;
 	IActivity activity;
 	Throwable t;
 

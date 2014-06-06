@@ -1,7 +1,14 @@
 package pt.jma.orchestration.activity;
 
-public final class ActionResult {
+import java.io.Serializable;
 
+public final class ActionResult implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7682689657333751651L;
+	
 	Throwable error;
 	String outcome;
 

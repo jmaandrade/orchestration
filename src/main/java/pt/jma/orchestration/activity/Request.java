@@ -1,12 +1,18 @@
 package pt.jma.orchestration.activity;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 import pt.jma.common.IMapUtil;
 import pt.jma.common.MapUtil;
 
-public class Request extends MapUtil implements IRequest {
+public class Request extends MapUtil implements IRequest , Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6847897856055899225L;
+	
 	IMapUtil context = new MapUtil();
 
 	public IMapUtil getContext() throws Exception {

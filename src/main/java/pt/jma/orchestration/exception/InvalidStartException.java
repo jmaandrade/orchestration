@@ -1,6 +1,13 @@
 package pt.jma.orchestration.exception;
 
-public class InvalidStartException extends OrchestrationException {
+import java.io.Serializable;
+
+public class InvalidStartException extends OrchestrationException  implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4942881064774272641L;
 
 	public InvalidStartException() {
 

@@ -1,5 +1,6 @@
 package pt.jma.orchestration.activity.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,12 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "actionList" })
-public class ActionsType {
+public class ActionsType  implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2841442993967941662L;
 
 	@XmlAttribute(required = false)
 	protected String start;

@@ -1,5 +1,6 @@
 package pt.jma.orchestration.activity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,8 +9,12 @@ import pt.jma.common.collection.IMapProcessor;
 import pt.jma.orchestration.activity.config.BindType;
 import pt.jma.orchestration.activity.config.StateType;
 
-public class ActivityEventProcessor implements IMapProcessor<Object> {
+public class ActivityEventProcessor implements IMapProcessor<Object>, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 593802565346518847L;
 	AbstractActivity activity;
 	IMapProcessor<BindType> bindProcessor = null;
 

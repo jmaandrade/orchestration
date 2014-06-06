@@ -1,5 +1,6 @@
 package pt.jma.orchestration.activity.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,12 @@ import pt.jma.orchestration.util.IConfigProperties;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "activity", namespace = "urn:pt.jma.orchestration.activity")
 @XmlType(propOrder = { "properties", "actions", "results", "binds", "events" })
-public class ActivityType implements IConfigProperties {
+public class ActivityType implements IConfigProperties , Serializable  {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2293281885261533015L;
 
 	public BindsType getBinds() {
 		return binds;

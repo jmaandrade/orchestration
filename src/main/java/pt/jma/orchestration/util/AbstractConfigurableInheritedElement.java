@@ -1,5 +1,6 @@
 package pt.jma.orchestration.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,7 +9,12 @@ import pt.jma.common.IMapUtil;
 import pt.jma.common.MapUtil;
 import pt.jma.orchestration.context.PropertyType;
 
-public abstract class AbstractConfigurableInheritedElement<T extends IConfigProperties> {
+public abstract class AbstractConfigurableInheritedElement<T extends IConfigProperties>  implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3259528524878877973L;
 
 	void bindProperties(List<PropertyType> list) {
 

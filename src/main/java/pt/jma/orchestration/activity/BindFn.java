@@ -5,7 +5,12 @@ import java.io.Serializable;
 import pt.jma.common.atomic.AbstractMapUtilEntryFn;
 import pt.jma.orchestration.converters.IConverter;
 
-public class BindFn extends AbstractMapUtilEntryFn<Serializable> {
+public class BindFn extends AbstractMapUtilEntryFn<Serializable> implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -925550960992312878L;
 
 	Serializable value;
 	IConverter<Serializable> converter;

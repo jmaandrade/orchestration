@@ -7,6 +7,7 @@
 
 package pt.jma.orchestration.context.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +21,12 @@ import pt.jma.orchestration.context.PropertyType;
 import pt.jma.orchestration.util.IConfigProperties;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AdapterConfigType  implements IConfigProperties {
+public class AdapterConfigType  implements IConfigProperties , Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2357107552868040052L;
 	@XmlElementWrapper(name = "properties", namespace = "urn:pt.jma.orchestration.context")
 	@XmlElement(name = "property", type = PropertyType.class, namespace = "urn:pt.jma.orchestration.context")
 	protected List<PropertyType> properties;

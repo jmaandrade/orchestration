@@ -1,5 +1,6 @@
 package pt.jma.orchestration.activity;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -27,7 +28,12 @@ import pt.jma.orchestration.service.IServiceInvocation;
 import pt.jma.orchestration.util.thread.IThreadActivityCaller;
 import pt.jma.orchestration.util.thread.ThreadActivity;
 
-public abstract class AbstractActivity extends Observable {
+public abstract class AbstractActivity extends Observable implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 831634741198960967L;
 
 	protected Map<String, IAtomicMapUtil> scope = new HashMap<String, IAtomicMapUtil>();
 
@@ -48,6 +54,10 @@ public abstract class AbstractActivity extends Observable {
 	UUID uUID;
 
 	IMapUtil state = new MapUtil();
+
+	public Serializable GetState(String key) throws Exception {
+		return (state.containsKey(key) ? state.get(key) : null);
+	}
 
 	protected static Map<String, String> inputScopesFrom = new HashMap<String, String>();
 	protected static Map<String, String> inputScopesTo = new HashMap<String, String>();

@@ -26,7 +26,12 @@ import pt.jma.orchestration.result.config.ResultType;
 import pt.jma.orchestration.service.IService;
 import pt.jma.orchestration.util.AbstractConfigurableInheritedElement;
 
-public abstract class AbstractActivityContext extends AbstractConfigurableInheritedElement<ContextType> implements IActivityContext {
+public abstract class AbstractActivityContext extends AbstractConfigurableInheritedElement<ContextType> implements IActivityContext , Serializable  {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7374751631998242252L;
 
 	public Map<String, IActivitySettings> mapActivitySettings = new HashMap<String, IActivitySettings>();
 

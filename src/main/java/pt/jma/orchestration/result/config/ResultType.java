@@ -7,6 +7,7 @@
 
 package pt.jma.orchestration.result.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,12 @@ import javax.xml.bind.annotation.XmlElement;
 import pt.jma.orchestration.activity.config.BindType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ResultType {
+public class ResultType  implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4226671053528084148L;
 
 	public String getName() {
 		return name;

@@ -7,6 +7,7 @@
 
 package pt.jma.orchestration.activity.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +23,12 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "target", "binds", "forwards" })
-public class ActionType {
+public class ActionType  implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8862907268788606727L;
 
 	@XmlAttribute(required = false)
 	protected String event;

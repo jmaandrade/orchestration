@@ -1,12 +1,19 @@
 package pt.jma.orchestration.activity.config;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TargetType {
+public class TargetType  implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7963443781171223248L;
+	
 	@XmlAttribute(name = "class")
 	protected String clazz;
 
