@@ -29,33 +29,12 @@ public class TestHelloWord {
 		try {
 			IActivityContext context = new XMLActivityContext(new URI("src/test/resources/context.xml"));
 			IActivity activity = context.lookup("teste");
-
-			activity.addEventObserver(new IEventActivityObserver() {
-
-				public void update(String event) {
-					System.out.printf(String.format("Event %s fired!!\n", event));
-				}
-
-			});
-
 			IRequest request = new Request();
 			request.put("name", "jma1");
 			IResponse response = activity.invoke(request);
 
 			System.out.printf("test_1() %s global-state.last-name=%s age=%s\n\n", response.get("sayHi"),
 					(String) context.getState().get("last-name"), response.get("age"));
-
-			ObjectOutput output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream("teste.ser")));
-			output.writeObject(activity);
-			output.close();
-
-			activity = null;
-
-			ObjectInput input = new ObjectInputStream(new BufferedInputStream(new FileInputStream("teste.ser")));
-			activity = (IActivity) input.readObject();
-			input.close();
-
-			System.out.printf("test_1(), (from serialized activity) activity-state.age=%s \n\n", (String) activity.getState().get("age"));
 
 		} catch (Throwable ex) {
 			ex.printStackTrace();
