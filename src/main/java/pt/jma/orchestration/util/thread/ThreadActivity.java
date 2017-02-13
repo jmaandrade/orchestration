@@ -43,22 +43,28 @@ public class ThreadActivity extends Thread {
 	}
 
 	public void run() {
+
+
+	   synchronized (this.caller) {
+		   
 		try {
 			this.response = null;
 			this.ex = null;
 			this.response = this.instance.invoke(this.request);
-
-			synchronized (this.caller) {
-
-				if (this.caller.notifyThreadEnd()) {
-					this.caller.notifyAll();
-				}
-
-			}
+			
 
 		} catch (Throwable ex) {
 			this.ex = ex;
-		}
+			
+		} finally {
+		    
+			if (this.caller.notifyThreadEnd()) {
+		    	    this.caller.notifyAll();
+			    }
+		}			
+	   }
+
+
 	}
 
 	public Throwable getEx() {
